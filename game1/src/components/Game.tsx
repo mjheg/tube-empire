@@ -126,6 +126,8 @@ export function Game() {
       )}
       {showSettings && (
         <SettingsModal
+          channelName={state.channelName}
+          subscribers={state.subscribers}
           prestigeCount={state.prestigeCount}
           totalClicks={state.totalClicks}
           totalPlayTime={state.totalPlayTime}
