@@ -54,7 +54,7 @@ export function Game() {
       <div className="flex-1 flex flex-col justify-between py-2">
         <CommentFeed subscribers={state.subscribers} />
         <StudioView spaceLevel={state.spaceLevel} equipmentLevel={state.equipmentLevel} />
-        <ClickButton viewsPerClick={state.viewsPerClick || 1} onClick={game.click} />
+        <ClickButton viewsPerClick={state.viewsPerClick || 1} activeCategory={state.activeCategory} onClick={game.click} />
         <MilestoneBar state={state} />
       </div>
 

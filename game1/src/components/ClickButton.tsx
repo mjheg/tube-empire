@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { formatNumber } from "@/game/format";
+import { generateVideoTitle } from "@/game/videoTitles";
 
 interface FloatingNumber {
   id: number;
@@ -14,11 +15,13 @@ let nextId = 0;
 
 interface Props {
   viewsPerClick: number;
+  activeCategory: number;
   onClick: () => void;
 }
 
-export function ClickButton({ viewsPerClick, onClick }: Props) {
+export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
   const [floats, setFloats] = useState<FloatingNumber[]>([]);
+  const [lastTitle, setLastTitle] = useState<string | null>(null);
 
   const handleClick = useCallback(() => {
     onClick();
@@ -26,13 +29,22 @@ export function ClickButton({ viewsPerClick, onClick }: Props) {
     const x = 40 + Math.random() * 20;
     const y = Math.random() * 20;
     setFloats((prev) => [...prev.slice(-10), { id, value: viewsPerClick, x, y }]);
+    setLastTitle(generateVideoTitle(activeCategory));
     setTimeout(() => {
       setFloats((prev) => prev.filter((f) => f.id !== id));
     }, 1000);
-  }, [viewsPerClick, onClick]);
+  }, [viewsPerClick, activeCategory, onClick]);
 
   return (
-    <div className="relative flex items-center justify-center py-4">
+    <div className="relative flex flex-col items-center justify-center py-4 gap-2">
+      {/* Last uploaded video title */}
+      {lastTitle && (
+        <div className="text-xs text-gray-400 animate-fade-in">
+          Uploading: <span className="text-gray-200">{lastTitle}</span>
+        </div>
+      )}
+
+      {/* Floating numbers */}
       {floats.map((f) => (
         <span
           key={f.id}
