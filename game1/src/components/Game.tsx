@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useGame } from "@/game/useGame";
 import { canPrestige as checkPrestige } from "@/game/prestige";
 import { StatsBar } from "./StatsBar";
@@ -20,6 +20,7 @@ import { DailyRewardModal } from "./modals/DailyRewardModal";
 import { PrestigeModal } from "./modals/PrestigeModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { ChannelNameInput } from "./ChannelNameInput";
+import { playUpgradeSound } from "@/game/sounds";
 
 export function Game() {
   const game = useGame();
@@ -36,6 +37,21 @@ export function Game() {
   }
 
   const { state } = game;
+
+  const buyEquipmentWithSound = useCallback((level: number) => {
+    game.buyEquipment(level);
+    playUpgradeSound();
+  }, [game]);
+
+  const buySpaceWithSound = useCallback((level: number) => {
+    game.buySpace(level);
+    playUpgradeSound();
+  }, [game]);
+
+  const hireTeamWithSound = useCallback((id: keyof typeof state.team) => {
+    game.hireTeam(id);
+    playUpgradeSound();
+  }, [game]);
 
   // Show channel name input for new players
   if (!state.channelName) {
@@ -60,10 +76,10 @@ export function Game() {
 
       {/* Panel Area */}
       {activeTab === "equipment" && (
-        <EquipmentPanel state={state} onBuyEquipment={game.buyEquipment} onBuySpace={game.buySpace} />
+        <EquipmentPanel state={state} onBuyEquipment={buyEquipmentWithSound} onBuySpace={buySpaceWithSound} />
       )}
       {activeTab === "team" && (
-        <TeamPanel state={state} onHire={game.hireTeam} />
+        <TeamPanel state={state} onHire={hireTeamWithSound} />
       )}
       {activeTab === "channel" && (
         <ChannelPanel state={state} onUnlock={game.unlockCategory} onSetActive={game.setActiveCategory} />

@@ -2,6 +2,8 @@
 
 import { Modal } from "./Modal";
 import { MilestoneDef } from "@/game/milestones";
+import { useEffect } from "react";
+import { playMilestoneSound } from "@/game/sounds";
 
 interface Props {
   milestone: MilestoneDef;
@@ -9,6 +11,8 @@ interface Props {
 }
 
 export function MilestoneModal({ milestone, onClose }: Props) {
+  useEffect(() => { playMilestoneSound(); }, []);
+
   return (
     <Modal onClose={onClose}>
       <div className="text-center">

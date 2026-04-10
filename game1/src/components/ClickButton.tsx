@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { formatNumber } from "@/game/format";
 import { generateVideoTitle } from "@/game/videoTitles";
+import { playClickSound } from "@/game/sounds";
 
 interface FloatingNumber {
   id: number;
@@ -25,6 +26,7 @@ export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
 
   const handleClick = useCallback(() => {
     onClick();
+    playClickSound();
     const id = nextId++;
     const x = 40 + Math.random() * 20;
     const y = Math.random() * 20;

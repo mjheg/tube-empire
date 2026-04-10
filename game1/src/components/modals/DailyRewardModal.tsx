@@ -3,6 +3,8 @@
 import { Modal } from "./Modal";
 import { DAILY_REWARDS } from "@/game/daily";
 import { formatNumber } from "@/game/format";
+import { useEffect } from "react";
+import { playDailySound } from "@/game/sounds";
 
 interface Props {
   streak: number;
@@ -11,6 +13,8 @@ interface Props {
 }
 
 export function DailyRewardModal({ streak, onClaim, onClose }: Props) {
+  useEffect(() => { playDailySound(); }, []);
+
   const rewardIndex = streak % 7;
   const reward = DAILY_REWARDS[rewardIndex];
 
