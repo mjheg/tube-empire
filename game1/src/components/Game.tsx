@@ -24,10 +24,15 @@ import { AchievementModal } from "./modals/AchievementModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { ChannelNameInput } from "./ChannelNameInput";
 import { TutorialOverlay } from "./TutorialOverlay";
+import { LanguageSelect } from "./LanguageSelect";
 import { playUpgradeSound } from "@/game/sounds";
+import { useLang } from "@/game/LangContext";
+import { t, loadLang, Lang } from "@/game/i18n";
 
 export function Game() {
   const game = useGame();
+  const { lang, setLang } = useLang();
+  const [langChosen, setLangChosen] = useState(() => loadLang() !== null);
   const [activeTab, setActiveTab] = useState<TabId | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showPrestige, setShowPrestige] = useState(false);
@@ -52,6 +57,18 @@ export function Game() {
       <div className="min-h-dvh bg-gray-900 flex items-center justify-center text-gray-400">
         Loading...
       </div>
+    );
+  }
+
+  // Show language select for first-time users
+  if (!langChosen) {
+    return (
+      <LanguageSelect
+        onSelect={(l: Lang) => {
+          setLang(l);
+          setLangChosen(true);
+        }}
+      />
     );
   }
 

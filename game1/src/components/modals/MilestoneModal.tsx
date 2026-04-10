@@ -4,6 +4,7 @@ import { Modal } from "./Modal";
 import { MilestoneDef } from "@/game/milestones";
 import { useEffect } from "react";
 import { playMilestoneSound } from "@/game/sounds";
+import { t } from "@/game/i18n";
 
 interface Props {
   milestone: MilestoneDef;
@@ -23,7 +24,7 @@ export function MilestoneModal({ milestone, onClose }: Props) {
           onClick={onClose}
           className="w-full py-3 bg-yellow-600 rounded-lg font-bold active:bg-yellow-700 transition-colors"
         >
-          Awesome!
+          {t("modal.awesome")}
         </button>
       </div>
     </Modal>

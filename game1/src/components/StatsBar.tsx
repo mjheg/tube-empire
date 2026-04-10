@@ -3,6 +3,7 @@
 import { GameState } from "@/game/state";
 import { formatNumber, formatMoney } from "@/game/format";
 import { CATEGORIES } from "@/game/categories";
+import { t } from "@/game/i18n";
 
 interface Props {
   state: GameState;
@@ -19,10 +20,10 @@ export function StatsBar({ state }: Props) {
             <div className="text-xs text-red-400 font-medium">{state.channelName}</div>
           )}
           <div className="text-lg font-bold">
-            <span className="text-yellow-400">&#9733;</span> {formatNumber(state.subscribers)} subs
+            <span className="text-yellow-400">&#9733;</span> {formatNumber(state.subscribers)} {t("stats.subs")}
           </div>
           <div className="text-sm text-gray-400">
-            &#9654; {formatNumber(state.views)} views&nbsp;
+            &#9654; {formatNumber(state.views)} {t("stats.views")}&nbsp;
             {state.subscribers >= 100 && (
               <span className="text-green-400">{formatMoney(state.money)}</span>
             )}
@@ -36,7 +37,7 @@ export function StatsBar({ state }: Props) {
           )}
           {trending && (
             <div className="text-xs text-orange-400">
-              Trending: {trending.emoji} {trending.name}
+              {t("stats.trending")}: {trending.emoji} {trending.name}
             </div>
           )}
         </div>

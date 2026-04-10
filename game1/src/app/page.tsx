@@ -1,5 +1,10 @@
 import { Game } from "@/components/Game";
+import { LangProvider } from "@/game/LangContext";
 
 export default function Home() {
-  return <Game />;
+  return (
+    <LangProvider>
+      <Game />
+    </LangProvider>
+  );
 }

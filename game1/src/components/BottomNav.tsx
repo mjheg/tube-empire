@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/game/i18n";
+
 export type TabId = "equipment" | "team" | "channel" | "achievements" | "shop";
 
 interface Props {
@@ -7,12 +9,12 @@ interface Props {
   onTabChange: (tab: TabId | null) => void;
 }
 
-const TABS: { id: TabId; label: string; emoji: string }[] = [
-  { id: "equipment", label: "Equipment", emoji: "\u{1F4F7}" },
-  { id: "team", label: "Team", emoji: "\u{1F465}" },
-  { id: "channel", label: "Channel", emoji: "\u{1F4FA}" },
-  { id: "achievements", label: "Trophies", emoji: "\u{1F3C6}" },
-  { id: "shop", label: "Shop", emoji: "\u{1F6D2}" },
+const TABS: { id: TabId; labelKey: "nav.equipment" | "nav.team" | "nav.channel" | "nav.trophies" | "nav.shop"; emoji: string }[] = [
+  { id: "equipment", labelKey: "nav.equipment", emoji: "\u{1F4F7}" },
+  { id: "team", labelKey: "nav.team", emoji: "\u{1F465}" },
+  { id: "channel", labelKey: "nav.channel", emoji: "\u{1F4FA}" },
+  { id: "achievements", labelKey: "nav.trophies", emoji: "\u{1F3C6}" },
+  { id: "shop", labelKey: "nav.shop", emoji: "\u{1F6D2}" },
 ];
 
 export function BottomNav({ activeTab, onTabChange }: Props) {
@@ -31,7 +33,7 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
           `}
         >
           <div className="text-lg">{tab.emoji}</div>
-          {tab.label}
+          {t(tab.labelKey)}
         </button>
       ))}
     </nav>

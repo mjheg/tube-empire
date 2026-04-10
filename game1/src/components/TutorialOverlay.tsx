@@ -1,6 +1,7 @@
 "use client";
 
 import { TutorialStep } from "@/game/tutorial";
+import { t, TextKey } from "@/game/i18n";
 
 interface Props {
   step: TutorialStep;
@@ -8,13 +9,14 @@ interface Props {
 }
 
 export function TutorialOverlay({ step, onDismiss }: Props) {
+  const message = t(`tutorial.${step.id}` as TextKey);
+
   if (step.waitFor === "click" && step.target === "click-button") {
-    // Don't block the click button - show floating hint
     return (
       <div className="absolute inset-0 z-40 pointer-events-none">
         <div className="absolute bottom-44 left-0 right-0 flex justify-center pointer-events-none">
           <div className="bg-yellow-500 text-gray-900 px-4 py-3 rounded-xl text-sm font-bold text-center shadow-lg animate-bounce-slow whitespace-pre-line max-w-xs">
-            {step.message}
+            {message}
             <div className="text-2xl mt-1">&#x1F447;</div>
           </div>
         </div>
@@ -39,14 +41,14 @@ export function TutorialOverlay({ step, onDismiss }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-base whitespace-pre-line leading-relaxed mb-4">
-          {step.message}
+          {message}
         </p>
         {step.waitFor === "dismiss" && (
           <button
             onClick={onDismiss}
             className="px-6 py-2 bg-yellow-500 text-gray-900 rounded-lg font-bold active:bg-yellow-600 transition-colors"
           >
-            Got it!
+            {t("modal.gotIt")}
           </button>
         )}
       </div>

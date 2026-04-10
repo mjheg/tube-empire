@@ -3,6 +3,7 @@
 import { Modal } from "./Modal";
 import { formatNumber } from "@/game/format";
 import { OfflineReport } from "@/game/useGame";
+import { t } from "@/game/i18n";
 
 interface Props {
   report: OfflineReport;
@@ -17,13 +18,13 @@ export function OfflineModal({ report, onClose }: Props) {
     <Modal onClose={onClose}>
       <div className="text-center">
         <div className="text-4xl mb-3">&#x1F4A4;</div>
-        <h2 className="text-xl font-bold mb-2">Welcome Back!</h2>
+        <h2 className="text-xl font-bold mb-2">{t("modal.welcomeBack")}</h2>
         <p className="text-gray-400 mb-4">
-          While you were away ({hours > 0 ? `${hours}h ` : ""}{minutes}m)...
+          {t("modal.whileAway")} ({hours > 0 ? `${hours}h ` : ""}{minutes}m)...
         </p>
         <div className="bg-gray-700/50 rounded-lg p-4 mb-4 space-y-2">
           <div className="text-lg font-bold text-yellow-400">
-            +{formatNumber(report.offlineViews)} views
+            +{formatNumber(report.offlineViews)} {t("stats.views")}
           </div>
           {report.offlineMoney > 0 && (
             <div className="text-green-400">
@@ -35,7 +36,7 @@ export function OfflineModal({ report, onClose }: Props) {
           onClick={onClose}
           className="w-full py-3 bg-red-600 rounded-lg font-bold active:bg-red-700 transition-colors"
         >
-          Collect!
+          {t("modal.collect")}
         </button>
       </div>
     </Modal>

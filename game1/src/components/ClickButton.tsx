@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { formatNumber } from "@/game/format";
 import { generateVideoTitle } from "@/game/videoTitles";
 import { playClickSound } from "@/game/sounds";
+import { t } from "@/game/i18n";
 
 interface FloatingNumber {
   id: number;
@@ -42,7 +43,7 @@ export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
       {/* Last uploaded video title */}
       {lastTitle && (
         <div className="text-xs text-gray-400 animate-fade-in">
-          Uploading: <span className="text-gray-200">{lastTitle}</span>
+          {t("click.uploading")}: <span className="text-gray-200">{lastTitle}</span>
         </div>
       )}
 
@@ -67,7 +68,7 @@ export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
           shadow-lg shadow-red-900/50
         "
       >
-        Upload Video!
+        {t("click.upload")}
       </button>
     </div>
   );

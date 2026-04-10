@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { generateComment, getCommentInterval } from "@/game/comments";
+import { t } from "@/game/i18n";
 
 interface Comment {
   id: number;
@@ -48,7 +49,7 @@ export function CommentFeed({ subscribers }: Props) {
         </div>
       ))}
       {comments.length === 0 && (
-        <div className="text-gray-500 text-sm">Waiting for comments...</div>
+        <div className="text-gray-500 text-sm">{t("comments.waiting")}</div>
       )}
     </div>
   );

@@ -3,6 +3,7 @@
 import { GameState } from "@/game/state";
 import { MILESTONES } from "@/game/milestones";
 import { formatNumber } from "@/game/format";
+import { t } from "@/game/i18n";
 
 interface Props {
   state: GameState;
@@ -23,7 +24,7 @@ export function MilestoneBar({ state }: Props) {
   return (
     <div className="px-4 py-2">
       <div className="flex justify-between text-xs text-gray-400 mb-1">
-        <span>Next: {next.emoji} {next.title}</span>
+        <span>{t("milestone.next")}: {next.emoji} {next.title}</span>
         <span>{formatNumber(state.subscribers)} / {formatNumber(next.subscribers)}</span>
       </div>
       <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
