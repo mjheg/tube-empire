@@ -92,7 +92,7 @@ export function Game() {
   };
 
   return (
-    <div className="min-h-dvh bg-[#0a0e1a] flex flex-col max-w-md mx-auto relative">
+    <div className="h-dvh bg-[#0a0e1a] flex flex-col max-w-md mx-auto relative overflow-hidden">
       {/* Stats */}
       <StatsBar state={state} />
 
@@ -100,25 +100,29 @@ export function Game() {
       {game.activeEvent && <EventModal activeEvent={game.activeEvent} />}
 
       {/* Main Game Area */}
-      <div className="flex-1 flex flex-col justify-between py-2">
+      <div className="flex-1 flex flex-col justify-between py-2 min-h-0">
         <CommentFeed subscribers={state.subscribers} />
         <StudioView spaceLevel={state.spaceLevel} equipmentLevel={state.equipmentLevel} />
         <ClickButton viewsPerClick={state.viewsPerClick || 1} activeCategory={state.activeCategory} onClick={handleClick} />
         <MilestoneBar state={state} />
       </div>
 
-      {/* Panel Area */}
-      {activeTab === "equipment" && (
-        <EquipmentPanel state={state} onBuyEquipment={buyEquipmentWithSound} onBuySpace={buySpaceWithSound} />
+      {/* Panel Area - absolute positioned above BottomNav */}
+      {activeTab && (
+        <div className="absolute bottom-14 left-0 right-0 bg-[#0a0e1a] border-t border-indigo-900/30 z-20">
+          {activeTab === "equipment" && (
+            <EquipmentPanel state={state} onBuyEquipment={buyEquipmentWithSound} onBuySpace={buySpaceWithSound} />
+          )}
+          {activeTab === "team" && (
+            <TeamPanel state={state} onHire={hireTeamWithSound} />
+          )}
+          {activeTab === "channel" && (
+            <ChannelPanel state={state} onUnlock={game.unlockCategory} onSetActive={game.setActiveCategory} />
+          )}
+          {activeTab === "achievements" && <AchievementsPanel state={state} />}
+          {activeTab === "shop" && <ShopPanel />}
+        </div>
       )}
-      {activeTab === "team" && (
-        <TeamPanel state={state} onHire={hireTeamWithSound} />
-      )}
-      {activeTab === "channel" && (
-        <ChannelPanel state={state} onUnlock={game.unlockCategory} onSetActive={game.setActiveCategory} />
-      )}
-      {activeTab === "achievements" && <AchievementsPanel state={state} />}
-      {activeTab === "shop" && <ShopPanel />}
 
       {/* Settings button */}
       <button
