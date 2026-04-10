@@ -4,10 +4,10 @@
   --color-primary: #ff4757;
   --color-secondary: #ffa502;
   --color-accent: #2ed573;
-  --color-bg: #111827;
-  --color-surface: #1f2937;
-  --color-text: #f9fafb;
-  --color-text-dim: #9ca3af;
+  --color-bg: #0a0e1a;
+  --color-surface: #141b2d;
+  --color-text: #f0f0f0;
+  --color-text-dim: #8892b0;
 }
 
 * {
@@ -21,14 +21,35 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+/* Glow effects */
+.glow-red {
+  box-shadow: 0 0 20px rgba(255, 71, 87, 0.3), 0 0 60px rgba(255, 71, 87, 0.1);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 15px rgba(255, 165, 2, 0.3);
+}
+
+.glow-green {
+  box-shadow: 0 0 15px rgba(46, 213, 115, 0.3);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
 @keyframes float-up {
   0% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-30px) scale(1.2);
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px);
+    transform: translateY(-70px) scale(0.8);
   }
 }
 
@@ -71,12 +92,12 @@ html, body {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
 }
 
 .animate-pulse-slow {
-  animation: pulse-slow 3s ease-in-out infinite;
+  animation: pulse-slow 2.5s ease-in-out infinite;
 }
 
 @keyframes bounce-slow {
@@ -90,6 +111,21 @@ html, body {
 
 .animate-bounce-slow {
   animation: bounce-slow 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
 }
 
 /* Button press feedback */

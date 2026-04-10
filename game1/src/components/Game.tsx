@@ -54,7 +54,7 @@ export function Game() {
 
   if (!game.state) {
     return (
-      <div className="min-h-dvh bg-gray-900 flex items-center justify-center text-gray-400">
+      <div className="min-h-dvh bg-[#0a0e1a] flex items-center justify-center text-gray-400">
         Loading...
       </div>
     );
@@ -92,7 +92,7 @@ export function Game() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-900 flex flex-col max-w-md mx-auto relative">
+    <div className="min-h-dvh bg-[#0a0e1a] flex flex-col max-w-md mx-auto relative">
       {/* Stats */}
       <StatsBar state={state} />
 

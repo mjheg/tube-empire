@@ -23,14 +23,18 @@ export function MilestoneBar({ state }: Props) {
 
   return (
     <div className="px-4 py-2">
-      <div className="flex justify-between text-xs text-gray-400 mb-1">
-        <span>{t("milestone.next")}: {next.emoji} {next.title}</span>
-        <span>{formatNumber(state.subscribers)} / {formatNumber(next.subscribers)}</span>
+      <div className="flex justify-between text-xs mb-1">
+        <span className="text-purple-300">{t("milestone.next")}: {next.emoji} {next.title}</span>
+        <span className="text-gray-400 font-mono">{formatNumber(state.subscribers)} / {formatNumber(next.subscribers)}</span>
       </div>
-      <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+      <div className="h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
         <div
-          className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
+          className="h-full rounded-full transition-all duration-300"
+          style={{
+            width: `${progress}%`,
+            background: "linear-gradient(90deg, #f59e0b, #ef4444, #ec4899)",
+            boxShadow: progress > 5 ? "0 0 10px rgba(239,68,68,0.5)" : "none",
+          }}
         />
       </div>
     </div>

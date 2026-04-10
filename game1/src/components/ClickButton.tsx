@@ -24,13 +24,14 @@ interface Props {
 export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
   const [floats, setFloats] = useState<FloatingNumber[]>([]);
   const [lastTitle, setLastTitle] = useState<string | null>(null);
+  const [pressing, setPressing] = useState(false);
 
   const handleClick = useCallback(() => {
     onClick();
     playClickSound();
     const id = nextId++;
-    const x = 40 + Math.random() * 20;
-    const y = Math.random() * 20;
+    const x = 30 + Math.random() * 40;
+    const y = Math.random() * 30;
     setFloats((prev) => [...prev.slice(-10), { id, value: viewsPerClick, x, y }]);
     setLastTitle(generateVideoTitle(activeCategory));
     setTimeout(() => {
@@ -43,7 +44,7 @@ export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
       {/* Last uploaded video title */}
       {lastTitle && (
         <div className="text-xs text-gray-400 animate-fade-in">
-          {t("click.uploading")}: <span className="text-gray-200">{lastTitle}</span>
+          {t("click.uploading")}: <span className="text-cyan-300">{lastTitle}</span>
         </div>
       )}
 
@@ -51,7 +52,7 @@ export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
       {floats.map((f) => (
         <span
           key={f.id}
-          className="absolute text-yellow-300 font-bold text-lg pointer-events-none animate-float"
+          className="absolute text-yellow-300 font-bold text-lg pointer-events-none animate-float text-glow"
           style={{ left: `${f.x}%`, top: `${f.y}%` }}
         >
           +{formatNumber(f.value)}
@@ -60,13 +61,21 @@ export function ClickButton({ viewsPerClick, activeCategory, onClick }: Props) {
 
       <button
         onClick={handleClick}
-        className="
-          px-8 py-4 rounded-2xl text-xl font-bold
-          bg-gradient-to-b from-red-500 to-red-700
-          active:from-red-600 active:to-red-800 active:scale-95
-          transition-transform duration-75
-          shadow-lg shadow-red-900/50
-        "
+        onPointerDown={() => setPressing(true)}
+        onPointerUp={() => setPressing(false)}
+        onPointerLeave={() => setPressing(false)}
+        className={`
+          px-10 py-5 rounded-2xl text-xl font-bold
+          bg-gradient-to-b from-red-500 via-red-600 to-red-700
+          border border-red-400/30
+          transition-all duration-75
+          ${pressing ? "scale-90 from-red-600 to-red-800 shadow-red-900/80" : "shadow-lg shadow-red-600/40"}
+        `}
+        style={{
+          boxShadow: pressing
+            ? "0 0 20px rgba(255,50,50,0.5), inset 0 2px 4px rgba(0,0,0,0.3)"
+            : "0 0 30px rgba(255,50,50,0.3), 0 4px 15px rgba(255,50,50,0.2)",
+        }}
       >
         {t("click.upload")}
       </button>

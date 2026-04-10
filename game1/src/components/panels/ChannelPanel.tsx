@@ -29,7 +29,7 @@ export function ChannelPanel({ state, onUnlock, onSetActive }: Props) {
               else if (canUnlock) onUnlock(cat.id);
             }}
             disabled={!unlocked && !canUnlock}
-            className={`w-full text-left p-3 rounded-lg border transition-colors ${active ? "border-red-500 bg-red-900/30 text-red-300" : unlocked ? "border-gray-600 bg-gray-800/50 text-gray-200 active:bg-gray-700/50" : canUnlock ? "border-yellow-600/50 bg-yellow-900/20 text-yellow-300 active:bg-yellow-900/40" : "border-gray-700 bg-gray-800/50 text-gray-500"}`}
+            className={`w-full text-left p-3 rounded-lg border transition-colors ${active ? "border-red-500 bg-red-900/30 text-red-300" : unlocked ? "border-gray-600 bg-gray-800/50 text-gray-200 active:bg-gray-700/50" : canUnlock ? "border-amber-500/50 bg-amber-900/20 text-amber-300 active:bg-amber-800/40 glow-yellow" : "border-gray-700 bg-gray-800/50 text-gray-500"}`}
           >
             <div className="flex justify-between items-center">
               <span className="font-medium">

@@ -19,20 +19,22 @@ const TABS: { id: TabId; labelKey: "nav.equipment" | "nav.team" | "nav.channel" 
 
 export function BottomNav({ activeTab, onTabChange }: Props) {
   return (
-    <nav className="flex border-t border-gray-700 bg-gray-800/90 backdrop-blur safe-bottom">
+    <nav className="flex border-t border-indigo-900/50 bg-gradient-to-t from-[#0a0e1a] to-[#141b2d] safe-bottom">
       {TABS.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(activeTab === tab.id ? null : tab.id)}
           className={`
-            flex-1 py-3 text-center text-xs font-medium transition-colors
+            flex-1 py-3 text-center text-xs font-medium transition-all
             ${activeTab === tab.id
-              ? "text-red-400 bg-gray-700/50"
-              : "text-gray-400 active:text-gray-200"
+              ? "text-cyan-400 bg-cyan-500/10"
+              : "text-gray-500 active:text-gray-300"
             }
           `}
         >
-          <div className="text-lg">{tab.emoji}</div>
+          <div className={`text-lg ${activeTab === tab.id ? "scale-110" : ""} transition-transform`}>
+            {tab.emoji}
+          </div>
           {t(tab.labelKey)}
         </button>
       ))}

@@ -23,7 +23,7 @@ export function EquipmentPanel({ state, onBuyEquipment, onBuySpace }: Props) {
             key={eq.id}
             disabled={owned || !canBuy}
             onClick={() => canBuy && onBuyEquipment(i)}
-            className={`w-full text-left p-3 rounded-lg border transition-colors ${owned ? "border-green-600/50 bg-green-900/20 text-green-400" : canBuy ? "border-yellow-600/50 bg-yellow-900/20 text-yellow-300 active:bg-yellow-900/40" : "border-gray-700 bg-gray-800/50 text-gray-500"}`}
+            className={`w-full text-left p-3 rounded-lg border transition-colors ${owned ? "border-green-600/50 bg-green-900/20 text-green-400" : canBuy ? "border-amber-500/50 bg-amber-900/20 text-amber-300 active:bg-amber-800/40 glow-yellow" : "border-gray-700 bg-gray-800/50 text-gray-500"}`}
           >
             <div className="flex justify-between">
               <span className="font-medium">{eq.name}</span>
@@ -43,7 +43,7 @@ export function EquipmentPanel({ state, onBuyEquipment, onBuySpace }: Props) {
             key={sp.id}
             disabled={owned || !canBuy}
             onClick={() => canBuy && onBuySpace(i)}
-            className={`w-full text-left p-3 rounded-lg border transition-colors ${owned ? "border-green-600/50 bg-green-900/20 text-green-400" : canBuy ? "border-yellow-600/50 bg-yellow-900/20 text-yellow-300 active:bg-yellow-900/40" : "border-gray-700 bg-gray-800/50 text-gray-500"}`}
+            className={`w-full text-left p-3 rounded-lg border transition-colors ${owned ? "border-green-600/50 bg-green-900/20 text-green-400" : canBuy ? "border-amber-500/50 bg-amber-900/20 text-amber-300 active:bg-amber-800/40 glow-yellow" : "border-gray-700 bg-gray-800/50 text-gray-500"}`}
           >
             <div className="flex justify-between">
               <span className="font-medium">{sp.name}</span>
