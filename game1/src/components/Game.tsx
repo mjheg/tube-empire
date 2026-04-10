@@ -30,16 +30,6 @@ export function Game() {
   const [showSettings, setShowSettings] = useState(false);
   const [showPrestige, setShowPrestige] = useState(false);
 
-  if (!game.state) {
-    return (
-      <div className="min-h-dvh bg-gray-900 flex items-center justify-center text-gray-400">
-        Loading...
-      </div>
-    );
-  }
-
-  const { state } = game;
-
   const buyEquipmentWithSound = useCallback((level: number) => {
     game.buyEquipment(level);
     playUpgradeSound();
@@ -50,10 +40,20 @@ export function Game() {
     playUpgradeSound();
   }, [game]);
 
-  const hireTeamWithSound = useCallback((id: keyof typeof state.team) => {
+  const hireTeamWithSound = useCallback((id: "editor" | "thumbnail" | "manager" | "pd") => {
     game.hireTeam(id);
     playUpgradeSound();
   }, [game]);
+
+  if (!game.state) {
+    return (
+      <div className="min-h-dvh bg-gray-900 flex items-center justify-center text-gray-400">
+        Loading...
+      </div>
+    );
+  }
+
+  const { state } = game;
 
   // Show channel name input for new players
   if (!state.channelName) {
