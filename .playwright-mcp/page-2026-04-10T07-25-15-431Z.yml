@@ -1,0 +1,8 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]: 🌏
+    - heading "Select Language / 언어 선택" [level=1] [ref=e4]
+    - generic [ref=e5]:
+      - button "🇺🇸 English" [ref=e6]
+      - button "🇰🇷 한국어" [ref=e7]
+  - alert [ref=e8]
