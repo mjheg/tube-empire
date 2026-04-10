@@ -6,6 +6,7 @@ import { renderFrame } from "@/canvas/renderer";
 import { HamsterAIState, updateHamsterAI, createHamsterAI } from "@/canvas/hamsterAI";
 import { handleTap, handleDrag } from "@/canvas/interactions";
 import { pet } from "@/game/stats";
+import { preloadSprites } from "@/canvas/sprites";
 
 interface Props {
   state: HamsterState;
@@ -20,6 +21,7 @@ export function GameCanvas({ state, onStateChange }: Props) {
   const dragStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    preloadSprites();
     const canvas = canvasRef.current;
     if (!canvas) return;
     aiRef.current = createHamsterAI(canvas.width, canvas.height);

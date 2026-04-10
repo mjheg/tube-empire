@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <radialGradient id="wheelGrad" cx="45%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#c5cae9"/>
+      <stop offset="70%" stop-color="#9fa8da"/>
+      <stop offset="100%" stop-color="#5c6bc0"/>
+    </radialGradient>
+    <linearGradient id="standGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#78909c"/>
+      <stop offset="50%" stop-color="#90a4ae"/>
+      <stop offset="100%" stop-color="#607d8b"/>
+    </linearGradient>
+  </defs>
+  <!-- Shadow -->
+  <ellipse cx="62" cy="110" rx="40" ry="8" fill="rgba(0,0,0,0.1)"/>
+  <!-- Stand -->
+  <rect x="52" y="70" width="16" height="38" rx="3" fill="url(#standGrad)"/>
+  <rect x="40" y="102" width="40" height="8" rx="4" fill="#607d8b"/>
+  <!-- Wheel outer -->
+  <circle cx="60" cy="50" r="48" fill="url(#wheelGrad)" stroke="#7986cb" stroke-width="3"/>
+  <!-- Wheel inner ring -->
+  <circle cx="60" cy="50" r="42" fill="none" stroke="#b0b8d4" stroke-width="1.5"/>
+  <!-- Spokes -->
+  <g stroke="#7986cb" stroke-width="2">
+    <line x1="60" y1="50" x2="60" y2="8"/>
+    <line x1="60" y1="50" x2="60" y2="92"/>
+    <line x1="60" y1="50" x2="18" y2="50"/>
+    <line x1="60" y1="50" x2="102" y2="50"/>
+    <line x1="60" y1="50" x2="30" y2="20"/>
+    <line x1="60" y1="50" x2="90" y2="80"/>
+    <line x1="60" y1="50" x2="90" y2="20"/>
+    <line x1="60" y1="50" x2="30" y2="80"/>
+  </g>
+  <!-- Center hub -->
+  <circle cx="60" cy="50" r="6" fill="#3949ab"/>
+  <circle cx="60" cy="50" r="3" fill="#5c6bc0"/>
+  <!-- Highlight -->
+  <circle cx="45" cy="35" r="15" fill="rgba(255,255,255,0.15)"/>
+</svg>

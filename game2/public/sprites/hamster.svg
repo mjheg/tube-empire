@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <defs>
+    <radialGradient id="bodyGrad" cx="45%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#f0d0a0"/>
+      <stop offset="40%" stop-color="#d4a574"/>
+      <stop offset="80%" stop-color="#b8864a"/>
+      <stop offset="100%" stop-color="#9c7040"/>
+    </radialGradient>
+    <radialGradient id="bellyGrad" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#faf5ee"/>
+      <stop offset="100%" stop-color="#e8d5b8"/>
+    </radialGradient>
+    <radialGradient id="cheekGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(255,150,150,0.6)"/>
+      <stop offset="100%" stop-color="rgba(255,150,150,0)"/>
+    </radialGradient>
+    <radialGradient id="earInner" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f8bbd0"/>
+      <stop offset="100%" stop-color="#e091a8"/>
+    </radialGradient>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Shadow -->
+  <ellipse cx="60" cy="88" rx="35" ry="8" fill="rgba(0,0,0,0.1)"/>
+  <!-- Tail -->
+  <ellipse cx="58" cy="82" rx="5" ry="4" fill="#c4956a" transform="rotate(-15,58,82)"/>
+  <!-- Body -->
+  <ellipse cx="60" cy="50" rx="38" ry="32" fill="url(#bodyGrad)" filter="url(#shadow)"/>
+  <!-- Back stripe -->
+  <ellipse cx="60" cy="32" rx="18" ry="6" fill="rgba(140,100,60,0.25)"/>
+  <!-- Belly -->
+  <ellipse cx="60" cy="55" rx="24" ry="20" fill="url(#bellyGrad)"/>
+  <!-- Left ear outer -->
+  <ellipse cx="30" cy="22" rx="12" ry="14" fill="#c4956a" transform="rotate(-15,30,22)"/>
+  <!-- Left ear inner -->
+  <ellipse cx="30" cy="22" rx="7" ry="9" fill="url(#earInner)" transform="rotate(-15,30,22)"/>
+  <!-- Right ear outer -->
+  <ellipse cx="90" cy="22" rx="12" ry="14" fill="#c4956a" transform="rotate(15,90,22)"/>
+  <!-- Right ear inner -->
+  <ellipse cx="90" cy="22" rx="7" ry="9" fill="url(#earInner)" transform="rotate(15,90,22)"/>
+  <!-- Left cheek -->
+  <circle cx="35" cy="52" r="12" fill="url(#cheekGrad)"/>
+  <!-- Right cheek -->
+  <circle cx="85" cy="52" r="12" fill="url(#cheekGrad)"/>
+  <!-- Left eye -->
+  <circle cx="47" cy="42" r="4.5" fill="#1a1a1a"/>
+  <circle cx="48.5" cy="40.5" r="2" fill="#fff"/>
+  <circle cx="45.5" cy="43" r="0.8" fill="#fff"/>
+  <!-- Right eye -->
+  <circle cx="73" cy="42" r="4.5" fill="#1a1a1a"/>
+  <circle cx="74.5" cy="40.5" r="2" fill="#fff"/>
+  <circle cx="71.5" cy="43" r="0.8" fill="#fff"/>
+  <!-- Nose -->
+  <ellipse cx="60" cy="50" rx="3.5" ry="2.5" fill="#e8888a"/>
+  <ellipse cx="59" cy="49" rx="1.5" ry="1" fill="rgba(255,200,200,0.6)"/>
+  <!-- Whiskers -->
+  <g stroke="rgba(120,100,80,0.35)" stroke-width="0.7" fill="none">
+    <line x1="50" y1="52" x2="20" y2="48"/>
+    <line x1="50" y1="54" x2="18" y2="54"/>
+    <line x1="50" y1="56" x2="20" y2="60"/>
+    <line x1="70" y1="52" x2="100" y2="48"/>
+    <line x1="70" y1="54" x2="102" y2="54"/>
+    <line x1="70" y1="56" x2="100" y2="60"/>
+  </g>
+  <!-- Front paws -->
+  <ellipse cx="42" cy="75" rx="6" ry="4" fill="#e0bf98" transform="rotate(-10,42,75)"/>
+  <ellipse cx="78" cy="75" rx="6" ry="4" fill="#e0bf98" transform="rotate(10,78,75)"/>
+</svg>

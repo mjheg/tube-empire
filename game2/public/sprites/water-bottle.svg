@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 120">
+  <defs>
+    <linearGradient id="bottleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(180,210,240,0.6)"/>
+      <stop offset="30%" stop-color="rgba(220,240,255,0.8)"/>
+      <stop offset="70%" stop-color="rgba(180,210,240,0.6)"/>
+      <stop offset="100%" stop-color="rgba(150,190,220,0.5)"/>
+    </linearGradient>
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#64b5f6"/>
+      <stop offset="100%" stop-color="#1e88e5"/>
+    </linearGradient>
+  </defs>
+  <!-- Bottle body -->
+  <rect x="10" y="5" width="40" height="80" rx="6" fill="url(#bottleGrad)" stroke="rgba(150,190,220,0.5)" stroke-width="1"/>
+  <!-- Water -->
+  <rect x="14" y="30" width="32" height="52" rx="4" fill="url(#waterGrad)" opacity="0.8"/>
+  <!-- Reflection -->
+  <rect x="16" y="10" width="8" height="35" rx="3" fill="rgba(255,255,255,0.35)"/>
+  <!-- Cap -->
+  <rect x="15" y="0" width="30" height="10" rx="3" fill="#90a4ae"/>
+  <!-- Mounting brackets -->
+  <rect x="2" y="25" width="56" height="8" rx="3" fill="#4CAF50"/>
+  <rect x="2" y="55" width="56" height="8" rx="3" fill="#4CAF50"/>
+  <!-- Spout -->
+  <rect x="25" y="85" width="10" height="20" rx="2" fill="#b0bec5"/>
+  <circle cx="30" cy="108" r="4" fill="#90a4ae"/>
+  <!-- Drip -->
+  <ellipse cx="30" cy="115" rx="2" ry="3" fill="#64b5f6" opacity="0.6"/>
+</svg>
