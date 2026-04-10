@@ -5,19 +5,19 @@ import * as BABYLON from "@babylonjs/core";
 export function createScene(canvas: HTMLCanvasElement) {
   const engine = new BABYLON.Engine(canvas, true, { stencil: false });
   const scene = new BABYLON.Scene(engine);
-  scene.clearColor = new BABYLON.Color4(0.91, 0.84, 0.7, 1); // hammyhome warm tan background
+  scene.clearColor = new BABYLON.Color4(0.88, 0.82, 0.72, 1); // hammyhome tan
 
-  // Camera - front-facing slight top-down like hammyhome
+  // Camera - more top-down, zoomed in to fill screen like hammyhome
   const camera = new BABYLON.ArcRotateCamera(
     "camera",
     -Math.PI / 2,    // looking from front
-    Math.PI / 4,     // ~45 degrees from top (more front-facing)
-    14,              // distance
-    new BABYLON.Vector3(0, 0.5, 0), // look slightly above center
+    Math.PI / 3.2,   // ~56 degrees from top (more top-down like hammyhome)
+    11,              // closer zoom to fill screen
+    new BABYLON.Vector3(0, 0, 0.5), // center on cage
     scene
   );
-  camera.lowerRadiusLimit = 10;
-  camera.upperRadiusLimit = 20;
+  camera.lowerRadiusLimit = 8;
+  camera.upperRadiusLimit = 18;
   camera.lowerBetaLimit = 0.4;
   camera.upperBetaLimit = Math.PI / 2.2;
   camera.attachControl(canvas, true);
@@ -50,7 +50,7 @@ export function createScene(canvas: HTMLCanvasElement) {
   const floor = BABYLON.MeshBuilder.CreateBox("floor", { width: 10, height: 0.15, depth: 7 }, scene);
   floor.position.y = -0.075;
   const floorMat = new BABYLON.StandardMaterial("floorMat", scene);
-  floorMat.diffuseColor = new BABYLON.Color3(0.96, 0.94, 0.88); // lighter bedding
+  floorMat.diffuseColor = new BABYLON.Color3(0.97, 0.96, 0.93); // near-white like hammyhome
   floorMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
   floor.material = floorMat;
   floor.receiveShadows = true;
@@ -106,7 +106,7 @@ export function createScene(canvas: HTMLCanvasElement) {
 // === 3D HAMSTER - detailed, bigger, rounder, cuter ===
 export function createHamster(scene: BABYLON.Scene, shadowGen: BABYLON.ShadowGenerator) {
   const hamster = new BABYLON.TransformNode("hamster", scene);
-  hamster.scaling = new BABYLON.Vector3(1.4, 1.4, 1.4); // bigger overall
+  hamster.scaling = new BABYLON.Vector3(0.8, 0.8, 0.8); // proportional to cage like hammyhome
 
   // Materials
   const furMat = new BABYLON.StandardMaterial("furMat", scene);

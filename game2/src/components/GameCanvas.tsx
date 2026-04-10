@@ -17,10 +17,10 @@ import {
 } from "@/canvas/scene";
 
 const ITEM_POSITIONS = {
-  "water-bottle": { x: -4, z: -2.5 },
-  "food-bowl": { x: -3.5, z: 2 },
-  "wheel": { x: 0, z: -1 },
-  "house": { x: 3.5, z: 1 },
+  "water-bottle": { x: -4.2, z: -1 },  // left wall
+  "food-bowl": { x: -2, z: 2 },         // front-left
+  "wheel": { x: 0.5, z: 0 },            // center
+  "house": { x: 3.5, z: 0.5 },          // right side
 };
 
 interface Props {
@@ -87,10 +87,10 @@ export function GameCanvas({ state, mode, onStateChange, onFeed }: Props) {
     house.position = new BABYLON.Vector3(ITEM_POSITIONS["house"].x, 0, ITEM_POSITIONS["house"].z);
 
     const toyBall = createToyBall(scene, shadowGen);
-    toyBall.position = new BABYLON.Vector3(3.5, 0, -2);
+    toyBall.position = new BABYLON.Vector3(2, 0, 2);
 
     const hamsterBall = createHamsterBall(scene, shadowGen);
-    hamsterBall.position = new BABYLON.Vector3(-1, 0, -2);
+    hamsterBall.position = new BABYLON.Vector3(3.5, 0, -2);
 
     targetRef.current = { x: Math.random() * 4 - 2, z: Math.random() * 3 - 1.5 };
 

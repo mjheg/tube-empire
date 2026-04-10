@@ -141,7 +141,7 @@ export function Game() {
 
       {/* Bottom interaction menu - like hammyhome */}
       <div className="absolute bottom-0 left-0 right-0 z-10">
-        <div className="flex justify-center items-end gap-3 pb-4 px-4">
+        <div className="flex justify-center items-end gap-3 pb-6 px-4">
           {/* Move button */}
           <button
             onClick={() => setMode("move")}
