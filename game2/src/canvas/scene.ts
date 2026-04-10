@@ -7,21 +7,22 @@ export function createScene(canvas: HTMLCanvasElement) {
   const scene = new BABYLON.Scene(engine);
   scene.clearColor = new BABYLON.Color4(0.96, 0.91, 0.82, 1); // warm beige
 
-  // Camera - 3/4 view like hammyhome
+  // Camera - front-facing slight top-down like hammyhome
   const camera = new BABYLON.ArcRotateCamera(
     "camera",
-    -Math.PI / 2,    // horizontal angle
-    Math.PI / 3.5,   // vertical angle (~50 degrees from top)
-    12,              // distance
-    new BABYLON.Vector3(0, 0, 0),
+    -Math.PI / 2,    // looking from front
+    Math.PI / 4,     // ~45 degrees from top (more front-facing)
+    14,              // distance
+    new BABYLON.Vector3(0, 0.5, 0), // look slightly above center
     scene
   );
-  camera.lowerRadiusLimit = 8;
-  camera.upperRadiusLimit = 18;
-  camera.lowerBetaLimit = 0.5;
-  camera.upperBetaLimit = Math.PI / 2.5;
+  camera.lowerRadiusLimit = 10;
+  camera.upperRadiusLimit = 20;
+  camera.lowerBetaLimit = 0.4;
+  camera.upperBetaLimit = Math.PI / 2.2;
   camera.attachControl(canvas, true);
-  camera.panningSensibility = 0; // disable panning
+  camera.panningSensibility = 0;
+  camera.wheelPrecision = 30;
 
   // Lighting
   const hemiLight = new BABYLON.HemisphericLight(
@@ -43,8 +44,8 @@ export function createScene(canvas: HTMLCanvasElement) {
   shadowGen.useBlurExponentialShadowMap = true;
 
   // === CAGE ===
-  // Floor
-  const floor = BABYLON.MeshBuilder.CreateBox("floor", { width: 8, height: 0.15, depth: 6 }, scene);
+  // Floor (wider landscape proportions like hammyhome)
+  const floor = BABYLON.MeshBuilder.CreateBox("floor", { width: 10, height: 0.15, depth: 7 }, scene);
   floor.position.y = -0.075;
   const floorMat = new BABYLON.StandardMaterial("floorMat", scene);
   floorMat.diffuseColor = new BABYLON.Color3(0.95, 0.9, 0.78);
@@ -78,23 +79,23 @@ export function createScene(canvas: HTMLCanvasElement) {
   const wallHeight = 2.5;
 
   // Back wall
-  const backWall = BABYLON.MeshBuilder.CreateBox("backWall", { width: 8.5, height: wallHeight, depth: wallThickness }, scene);
-  backWall.position = new BABYLON.Vector3(0, wallHeight / 2, -3.125);
+  const backWall = BABYLON.MeshBuilder.CreateBox("backWall", { width: 10.5, height: wallHeight, depth: wallThickness }, scene);
+  backWall.position = new BABYLON.Vector3(0, wallHeight / 2, -3.625);
   backWall.material = wallMat;
 
   // Front wall (lower, so we can see inside)
-  const frontWall = BABYLON.MeshBuilder.CreateBox("frontWall", { width: 8.5, height: 0.8, depth: wallThickness }, scene);
-  frontWall.position = new BABYLON.Vector3(0, 0.4, 3.125);
+  const frontWall = BABYLON.MeshBuilder.CreateBox("frontWall", { width: 10.5, height: 0.6, depth: wallThickness }, scene);
+  frontWall.position = new BABYLON.Vector3(0, 0.3, 3.625);
   frontWall.material = wallMat;
 
   // Left wall
-  const leftWall = BABYLON.MeshBuilder.CreateBox("leftWall", { width: wallThickness, height: wallHeight, depth: 6.5 }, scene);
-  leftWall.position = new BABYLON.Vector3(-4.125, wallHeight / 2, 0);
+  const leftWall = BABYLON.MeshBuilder.CreateBox("leftWall", { width: wallThickness, height: wallHeight, depth: 7.5 }, scene);
+  leftWall.position = new BABYLON.Vector3(-5.125, wallHeight / 2, 0);
   leftWall.material = wallMat;
 
   // Right wall
-  const rightWall = BABYLON.MeshBuilder.CreateBox("rightWall", { width: wallThickness, height: wallHeight, depth: 6.5 }, scene);
-  rightWall.position = new BABYLON.Vector3(4.125, wallHeight / 2, 0);
+  const rightWall = BABYLON.MeshBuilder.CreateBox("rightWall", { width: wallThickness, height: wallHeight, depth: 7.5 }, scene);
+  rightWall.position = new BABYLON.Vector3(5.125, wallHeight / 2, 0);
   rightWall.material = wallMat;
 
   return { engine, scene, camera, shadowGen };

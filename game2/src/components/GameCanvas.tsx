@@ -17,10 +17,10 @@ import {
 
 // Item positions in 3D space
 const ITEM_POSITIONS = {
-  "water-bottle": { x: -3, z: -2 },
-  "food-bowl": { x: -2.5, z: 1.5 },
-  "wheel": { x: 2, z: -1 },
-  "house": { x: 2.5, z: 1.5 },
+  "water-bottle": { x: -4, z: -2.5 },
+  "food-bowl": { x: -3.5, z: 2 },
+  "wheel": { x: 0, z: -1 },
+  "house": { x: 3.5, z: 1 },
 };
 
 interface Props {
@@ -73,10 +73,10 @@ export function GameCanvas({ state, onStateChange }: Props) {
 
     // Extra items for visual richness
     const toyBall = createToyBall(scene, shadowGen);
-    toyBall.position = new BABYLON.Vector3(-0.5, 0, 0.5);
+    toyBall.position = new BABYLON.Vector3(3.5, 0, -2);
 
     const hamsterBall = createHamsterBall(scene, shadowGen);
-    hamsterBall.position = new BABYLON.Vector3(1, 0, -2);
+    hamsterBall.position = new BABYLON.Vector3(-1, 0, -2);
 
     // Initial target
     targetRef.current = { x: Math.random() * 4 - 2, z: Math.random() * 3 - 1.5 };
@@ -108,8 +108,8 @@ export function GameCanvas({ state, onStateChange }: Props) {
         } else {
           behaviorRef.current = "wander";
           targetRef.current = {
-            x: (Math.random() - 0.5) * 6,
-            z: (Math.random() - 0.5) * 4,
+            x: (Math.random() - 0.5) * 8,
+            z: (Math.random() - 0.5) * 5,
           };
         }
         timerRef.current = 3 + Math.random() * 5;
@@ -147,8 +147,8 @@ export function GameCanvas({ state, onStateChange }: Props) {
       }
 
       // Clamp to cage bounds
-      h.position.x = Math.max(-3.5, Math.min(3.5, h.position.x));
-      h.position.z = Math.max(-2.5, Math.min(2.5, h.position.z));
+      h.position.x = Math.max(-4.5, Math.min(4.5, h.position.x));
+      h.position.z = Math.max(-3, Math.min(3, h.position.z));
 
       // === BREATHING ===
       const body = scene.getMeshByName("body");

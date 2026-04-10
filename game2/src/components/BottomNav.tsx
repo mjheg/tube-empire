@@ -16,19 +16,22 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
 
 export function BottomNav({ activeTab, onTabChange }: Props) {
   return (
-    <nav className="flex border-t border-amber-300 bg-amber-50">
+    <nav className="flex justify-center gap-3 py-3 px-4 bg-black/20 backdrop-blur-sm">
       {TABS.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(activeTab === tab.id ? null : tab.id)}
-          className={`flex-1 py-3 text-center text-xs font-medium transition-colors ${
-            activeTab === tab.id
-              ? "text-amber-700 bg-amber-200/60"
-              : "text-amber-500 active:text-amber-700"
-          }`}
+          className={`
+            w-12 h-12 rounded-full flex items-center justify-center text-xl
+            transition-all shadow-lg
+            ${activeTab === tab.id
+              ? "bg-white text-amber-700 scale-110"
+              : "bg-white/70 text-amber-600 active:bg-white active:scale-105"
+            }
+          `}
+          title={tab.label}
         >
-          <div className="text-lg">{tab.emoji}</div>
-          {tab.label}
+          {tab.emoji}
         </button>
       ))}
     </nav>

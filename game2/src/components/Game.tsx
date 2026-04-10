@@ -6,7 +6,8 @@ import { decayStats, feed, play } from "@/game/stats";
 import { updateGrowthStage, checkLevelUp } from "@/game/growth";
 import { resetDailyMissions, updateMissionProgress } from "@/game/missions";
 import { saveGame, loadGame, calcOfflineChanges, applyOfflineChanges, OfflineReport } from "@/game/save";
-import { StatusBar } from "./StatusBar";
+import { getHappinessEmoji } from "@/game/stats";
+import { getGrowthLabel } from "@/game/growth";
 import { GameCanvas } from "./GameCanvas";
 import { BottomNav, TabId } from "./BottomNav";
 import { FeedPanel } from "./panels/FeedPanel";
@@ -27,7 +28,6 @@ export function Game() {
 
   useEffect(() => { stateRef.current = state; }, [state]);
 
-  // Load on mount
   useEffect(() => {
     const saved = loadGame();
     if (saved) {
@@ -42,7 +42,6 @@ export function Game() {
     }
   }, []);
 
-  // 1-second tick
   useEffect(() => {
     if (!state) return;
     const interval = setInterval(() => {
@@ -62,7 +61,6 @@ export function Game() {
     return () => clearInterval(interval);
   }, [state !== null]);
 
-  // Auto-save every 10 seconds
   useEffect(() => {
     if (!state) return;
     const interval = setInterval(() => {
@@ -113,38 +111,62 @@ export function Game() {
   }
 
   return (
-    <div className="h-dvh bg-amber-50 flex flex-col max-w-md mx-auto relative overflow-hidden">
-      <StatusBar state={state} />
+    <div className="h-dvh w-full bg-[#c9a96e] relative overflow-hidden">
+      {/* Canvas takes full screen */}
       <GameCanvas state={state} onStateChange={handleStateChange} />
 
-      {activeTab && (
-        <div className="absolute bottom-14 left-0 right-0 z-20 border-t border-amber-300">
-          {activeTab === "feed" && <FeedPanel state={state} onFeed={handleFeed} />}
-          {activeTab === "play" && (
-            <div className="p-4 bg-amber-50">
-              <button
-                onClick={handlePlay}
-                disabled={state.energy < 10}
-                className={`w-full py-4 rounded-xl text-lg font-bold ${
-                  state.energy >= 10 ? "bg-amber-500 text-white active:bg-amber-600" : "bg-gray-200 text-gray-400"
-                }`}
-              >
-                {state.energy >= 10 ? "\u{1F3BE} Play with hamster!" : "\u{1F4A4} Too tired..."}
-              </button>
-              <p className="text-xs text-amber-500 mt-2 text-center">Energy: {Math.floor(state.energy)}%</p>
-            </div>
-          )}
-          {activeTab === "decorate" && <DecoratePanel state={state} />}
-          {activeTab === "shop" && <ShopPanel state={state} onBuyItem={handleBuyItem} />}
+      {/* Overlay: top status bar */}
+      <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-start p-3 pointer-events-none">
+        <div className="pointer-events-auto bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 text-white">
+          <div className="text-sm font-bold">{"\u{1F439}"} {state.name}</div>
+          <div className="text-xs opacity-80">{getGrowthLabel(state.growthStage)} · Lv.{state.intimacyLevel}</div>
         </div>
-      )}
+        <div className="pointer-events-auto flex gap-2 items-center bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-sm">
+          <span>{getHappinessEmoji(state.happiness)}</span>
+          <span>{state.hunger > 50 ? "\u{1F35A}" : "\u{1F37D}\uFE0F"}</span>
+          <span>{state.energy > 50 ? "\u26A1" : "\u{1F4A4}"}</span>
+          <span className="font-bold">{"\u{1FA99}"}{state.coins}</span>
+        </div>
+      </div>
 
-      <button onClick={() => setShowSettings(true)} className="absolute top-3 right-3 text-amber-400 text-xl z-10">
-        {"\u2699\uFE0F"}
+      {/* Settings button */}
+      <button
+        onClick={() => setShowSettings(true)}
+        className="absolute top-14 right-3 z-10 bg-black/30 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white"
+      >
+        {"\u22EE"}
       </button>
 
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* Overlay: bottom nav */}
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        {/* Panel area */}
+        {activeTab && (
+          <div className="bg-white/95 backdrop-blur border-t border-amber-300 rounded-t-xl">
+            {activeTab === "feed" && <FeedPanel state={state} onFeed={handleFeed} />}
+            {activeTab === "play" && (
+              <div className="p-4">
+                <button
+                  onClick={handlePlay}
+                  disabled={state.energy < 10}
+                  className={`w-full py-4 rounded-xl text-lg font-bold ${
+                    state.energy >= 10 ? "bg-amber-500 text-white active:bg-amber-600" : "bg-gray-200 text-gray-400"
+                  }`}
+                >
+                  {state.energy >= 10 ? "\u{1F3BE} Play!" : "\u{1F4A4} Too tired..."}
+                </button>
+                <p className="text-xs text-amber-500 mt-2 text-center">Energy: {Math.floor(state.energy)}%</p>
+              </div>
+            )}
+            {activeTab === "decorate" && <DecoratePanel state={state} />}
+            {activeTab === "shop" && <ShopPanel state={state} onBuyItem={handleBuyItem} />}
+          </div>
+        )}
 
+        {/* Bottom buttons */}
+        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
+
+      {/* Modals */}
       {offlineReport && offlineReport.offlineMinutes >= 1 && (
         <OfflineModal report={offlineReport} hamsterName={state.name} onClose={() => setOfflineReport(null)} />
       )}
