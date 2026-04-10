@@ -382,3 +382,31 @@ export function createHouse(scene: BABYLON.Scene, shadowGen: BABYLON.ShadowGener
 
   return group;
 }
+
+export function createToyBall(scene: BABYLON.Scene, shadowGen: BABYLON.ShadowGenerator) {
+  const ball = BABYLON.MeshBuilder.CreateSphere("toyBall", { diameter: 0.5, segments: 16 }, scene);
+  ball.position.y = 0.25;
+  const ballMat = new BABYLON.StandardMaterial("ballMat", scene);
+  ballMat.diffuseColor = new BABYLON.Color3(0.9, 0.2, 0.2);
+  ballMat.specularColor = new BABYLON.Color3(0.6, 0.3, 0.3);
+  ball.material = ballMat;
+  shadowGen.addShadowCaster(ball);
+  return ball;
+}
+
+export function createHamsterBall(scene: BABYLON.Scene, shadowGen: BABYLON.ShadowGenerator) {
+  const group = new BABYLON.TransformNode("hamsterBallGroup", scene);
+
+  const sphere = BABYLON.MeshBuilder.CreateSphere("hamBall", { diameter: 1.2, segments: 24 }, scene);
+  sphere.position.y = 0.6;
+  sphere.parent = group;
+  const sphereMat = new BABYLON.StandardMaterial("hamBallMat", scene);
+  sphereMat.diffuseColor = new BABYLON.Color3(0.9, 0.9, 1);
+  sphereMat.alpha = 0.3;
+  sphereMat.specularColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+  sphereMat.specularPower = 64;
+  sphere.material = sphereMat;
+  shadowGen.addShadowCaster(sphere);
+
+  return group;
+}
