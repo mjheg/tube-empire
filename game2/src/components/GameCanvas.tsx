@@ -4,6 +4,7 @@ import { useRef, useEffect, useCallback } from "react";
 import * as BABYLON from "@babylonjs/core";
 import { HamsterState } from "@/game/state";
 import { pet } from "@/game/stats";
+import { InteractMode } from "./Game";
 import {
   createScene,
   createHamster,
@@ -15,7 +16,6 @@ import {
   createHamsterBall,
 } from "@/canvas/scene";
 
-// Item positions in 3D space
 const ITEM_POSITIONS = {
   "water-bottle": { x: -4, z: -2.5 },
   "food-bowl": { x: -3.5, z: 2 },
@@ -25,33 +25,48 @@ const ITEM_POSITIONS = {
 
 interface Props {
   state: HamsterState;
+  mode: InteractMode;
   onStateChange: (updater: (prev: HamsterState) => HamsterState) => void;
+  onFeed: () => void;
 }
 
-export function GameCanvas({ state, onStateChange }: Props) {
+export function GameCanvas({ state, mode, onStateChange, onFeed }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BABYLON.Engine | null>(null);
   const hamsterRef = useRef<BABYLON.TransformNode | null>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
+  const cameraRef = useRef<BABYLON.ArcRotateCamera | null>(null);
   const stateRef = useRef(state);
+  const modeRef = useRef(mode);
 
-  // AI state
   const targetRef = useRef({ x: 0, z: 0 });
   const timerRef = useRef(3);
   const behaviorRef = useRef<"wander" | "eat" | "sleep" | "wheel">("wander");
 
-  // Keep stateRef in sync
+  useEffect(() => { stateRef.current = state; }, [state]);
   useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
+    modeRef.current = mode;
+    // Enable/disable camera controls based on mode
+    if (cameraRef.current) {
+      if (mode === "move") {
+        cameraRef.current.attachControl(canvasRef.current!, true);
+      } else {
+        cameraRef.current.detachControl();
+      }
+    }
+  }, [mode]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const { engine, scene, shadowGen } = createScene(canvas);
+    const { engine, scene, camera, shadowGen } = createScene(canvas);
     engineRef.current = engine;
     sceneRef.current = scene;
+    cameraRef.current = camera;
+
+    // Start with camera detached (touch mode default)
+    camera.detachControl();
 
     // Create hamster
     const hamster = createHamster(scene, shadowGen);
@@ -71,14 +86,12 @@ export function GameCanvas({ state, onStateChange }: Props) {
     const house = createHouse(scene, shadowGen);
     house.position = new BABYLON.Vector3(ITEM_POSITIONS["house"].x, 0, ITEM_POSITIONS["house"].z);
 
-    // Extra items for visual richness
     const toyBall = createToyBall(scene, shadowGen);
     toyBall.position = new BABYLON.Vector3(3.5, 0, -2);
 
     const hamsterBall = createHamsterBall(scene, shadowGen);
     hamsterBall.position = new BABYLON.Vector3(-1, 0, -2);
 
-    // Initial target
     targetRef.current = { x: Math.random() * 4 - 2, z: Math.random() * 3 - 1.5 };
 
     // Animation loop
@@ -92,10 +105,9 @@ export function GameCanvas({ state, onStateChange }: Props) {
       const h = hamsterRef.current;
       const s = stateRef.current;
 
-      // === HAMSTER AI ===
+      // AI behavior
       timerRef.current -= dt;
       if (timerRef.current <= 0) {
-        // Pick behavior based on state
         if (s.hunger < 30) {
           behaviorRef.current = "eat";
           targetRef.current = { ...ITEM_POSITIONS["food-bowl"] };
@@ -125,20 +137,16 @@ export function GameCanvas({ state, onStateChange }: Props) {
         h.position.x += (dx / dist) * speed * dt;
         h.position.z += (dz / dist) * speed * dt;
 
-        // Smooth rotation toward target
         const targetAngle = Math.atan2(dx, dz);
         let angleDiff = targetAngle - h.rotation.y;
         while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
         while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
         h.rotation.y += angleDiff * 5 * dt;
 
-        // Walking bounce
         h.position.y = Math.abs(Math.sin(now * 0.01)) * 0.1;
       } else {
-        // Arrived at target - idle bobbing
         h.position.y = Math.sin(now * 0.003) * 0.02 + 0.02;
 
-        // Sleeping: slight rotation (lying down feel)
         if (behaviorRef.current === "sleep") {
           h.rotation.z = Math.sin(now * 0.001) * 0.05;
         } else {
@@ -146,48 +154,26 @@ export function GameCanvas({ state, onStateChange }: Props) {
         }
       }
 
-      // Clamp to cage bounds
       h.position.x = Math.max(-4.5, Math.min(4.5, h.position.x));
       h.position.z = Math.max(-3, Math.min(3, h.position.z));
 
-      // === BREATHING ===
+      // Breathing
       const body = scene.getMeshByName("body");
       if (body) {
-        const breathe = 1 + Math.sin(now * 0.003) * 0.025;
-        body.scaling.y = breathe;
+        body.scaling.y = 1 + Math.sin(now * 0.003) * 0.025;
       }
 
-      // === CHEEK SIZE (hunger indicator) ===
-      const cheeks = scene.getMeshesByTags?.("cheek") ?? [];
-      if (cheeks.length === 0) {
-        // Find cheeks by name
-        scene.meshes.forEach((m) => {
-          if (m.name === "cheek") {
-            const puffScale = s.hunger > 70 ? 1.3 : s.hunger > 40 ? 1.0 : 0.8;
-            m.scaling = new BABYLON.Vector3(puffScale, puffScale, puffScale);
-          }
-        });
-      }
-
-      // === WHEEL ROTATION ===
+      // Wheel rotation when near wheel
       if (behaviorRef.current === "wheel" && dist < 0.5) {
         const wheelMesh = scene.getMeshByName("wheelRing");
-        if (wheelMesh) {
-          wheelMesh.rotation.z += dt * 3;
-        }
+        if (wheelMesh) wheelMesh.rotation.z += dt * 3;
         const plate = scene.getMeshByName("wheelPlate");
-        if (plate) {
-          plate.rotation.z += dt * 3;
-        }
+        if (plate) plate.rotation.z += dt * 3;
       }
     });
 
-    // Render loop
-    engine.runRenderLoop(() => {
-      scene.render();
-    });
+    engine.runRenderLoop(() => scene.render());
 
-    // Resize
     const handleResize = () => engine.resize();
     window.addEventListener("resize", handleResize);
 
@@ -197,21 +183,46 @@ export function GameCanvas({ state, onStateChange }: Props) {
     };
   }, []);
 
-  // Handle clicking on hamster
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       const scene = sceneRef.current;
-      if (!scene) return;
+      if (!scene || modeRef.current === "move") return;
 
       const pickResult = scene.pick(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+
+      if (modeRef.current === "feed") {
+        // Feed mode: drop food where clicked on floor
+        if (pickResult?.hit) {
+          onFeed();
+
+          // Visual: create a small food sphere at click position
+          if (pickResult.pickedPoint) {
+            const food = BABYLON.MeshBuilder.CreateSphere("foodDrop", { diameter: 0.15 }, scene);
+            food.position = pickResult.pickedPoint.clone();
+            food.position.y = 0.1;
+            const foodMat = new BABYLON.StandardMaterial("foodDropMat", scene);
+            foodMat.diffuseColor = new BABYLON.Color3(0.55, 0.43, 0.35);
+            food.material = foodMat;
+
+            // Make hamster go to food
+            targetRef.current = { x: food.position.x, z: food.position.z };
+            timerRef.current = 5;
+            behaviorRef.current = "eat";
+
+            // Remove food after 3 seconds
+            setTimeout(() => food.dispose(), 3000);
+          }
+        }
+        return;
+      }
+
+      // Touch mode: pet the hamster
       if (pickResult?.hit && pickResult.pickedMesh) {
         let node: BABYLON.Node | null = pickResult.pickedMesh;
         while (node) {
           if (node.name === "hamster") {
-            // Pet the hamster!
             onStateChange((prev) => pet(prev));
 
-            // Jump animation
             if (hamsterRef.current) {
               const h = hamsterRef.current;
               const startY = h.position.y;
@@ -227,20 +238,6 @@ export function GameCanvas({ state, onStateChange }: Props) {
               ]);
               h.animations = [jumpAnim];
               scene.beginAnimation(h, 0, 10, false);
-
-              // Spin happily
-              const spinAnim = new BABYLON.Animation(
-                "spin", "rotation.y", 30,
-                BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
-              );
-              const startRot = h.rotation.y;
-              spinAnim.setKeys([
-                { frame: 0, value: startRot },
-                { frame: 10, value: startRot + Math.PI * 2 },
-              ]);
-              h.animations.push(spinAnim);
-              scene.beginAnimation(h, 0, 10, false);
             }
             break;
           }
@@ -248,13 +245,13 @@ export function GameCanvas({ state, onStateChange }: Props) {
         }
       }
     },
-    [onStateChange]
+    [onStateChange, onFeed]
   );
 
   return (
     <canvas
       ref={canvasRef}
-      className="w-full flex-1"
+      className="w-full h-full"
       onPointerDown={handlePointerDown}
       style={{ touchAction: "none" }}
     />

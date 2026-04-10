@@ -1,37 +1,37 @@
 "use client";
 
-export type TabId = "feed" | "play" | "decorate" | "shop";
+export type ModeId = "move" | "interact" | "customize" | "feed";
 
 interface Props {
-  activeTab: TabId | null;
-  onTabChange: (tab: TabId | null) => void;
+  activeMode: ModeId;
+  onModeChange: (mode: ModeId) => void;
 }
 
-const TABS: { id: TabId; label: string; emoji: string }[] = [
-  { id: "feed", label: "Feed", emoji: "\u{1F955}" },
-  { id: "play", label: "Play", emoji: "\u{1F3BE}" },
-  { id: "decorate", label: "Decorate", emoji: "\u{1F3A8}" },
-  { id: "shop", label: "Shop", emoji: "\u{1F6D2}" },
+const MODES: { id: ModeId; emoji: string; label: string }[] = [
+  { id: "move", emoji: "\u271A", label: "Move" },
+  { id: "interact", emoji: "\u{1F449}", label: "Pet" },
+  { id: "feed", emoji: "\u{1F955}", label: "Feed" },
+  { id: "customize", emoji: "\u{1F9E9}", label: "Customize" },
 ];
 
-export function BottomNav({ activeTab, onTabChange }: Props) {
+export function BottomNav({ activeMode, onModeChange }: Props) {
   return (
-    <nav className="flex justify-center gap-3 py-3 px-4 bg-black/20 backdrop-blur-sm">
-      {TABS.map((tab) => (
+    <nav className="flex justify-center gap-4 py-3 px-4">
+      {MODES.map((mode) => (
         <button
-          key={tab.id}
-          onClick={() => onTabChange(activeTab === tab.id ? null : tab.id)}
+          key={mode.id}
+          onClick={() => onModeChange(mode.id)}
           className={`
-            w-12 h-12 rounded-full flex items-center justify-center text-xl
-            transition-all shadow-lg
-            ${activeTab === tab.id
-              ? "bg-white text-amber-700 scale-110"
-              : "bg-white/70 text-amber-600 active:bg-white active:scale-105"
+            w-14 h-14 rounded-full flex items-center justify-center text-2xl
+            transition-all shadow-lg border-2
+            ${activeMode === mode.id
+              ? "bg-white text-amber-700 border-amber-400 scale-110"
+              : "bg-white/80 text-gray-600 border-transparent active:bg-white active:scale-105"
             }
           `}
-          title={tab.label}
+          title={mode.label}
         >
-          {tab.emoji}
+          {mode.emoji}
         </button>
       ))}
     </nav>
