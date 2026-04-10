@@ -1,0 +1,8 @@
+{
+  "name": "Hamster Home",
+  "short_name": "Hamster",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fef3c7",
+  "theme_color": "#fef3c7"
+}
