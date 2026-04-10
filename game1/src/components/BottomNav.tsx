@@ -1,6 +1,6 @@
 "use client";
 
-export type TabId = "equipment" | "team" | "channel" | "shop";
+export type TabId = "equipment" | "team" | "channel" | "achievements" | "shop";
 
 interface Props {
   activeTab: TabId | null;
@@ -11,6 +11,7 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
   { id: "equipment", label: "Equipment", emoji: "\u{1F4F7}" },
   { id: "team", label: "Team", emoji: "\u{1F465}" },
   { id: "channel", label: "Channel", emoji: "\u{1F4FA}" },
+  { id: "achievements", label: "Trophies", emoji: "\u{1F3C6}" },
   { id: "shop", label: "Shop", emoji: "\u{1F6D2}" },
 ];
 

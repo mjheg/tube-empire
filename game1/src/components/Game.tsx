@@ -13,11 +13,13 @@ import { EquipmentPanel } from "./panels/EquipmentPanel";
 import { TeamPanel } from "./panels/TeamPanel";
 import { ChannelPanel } from "./panels/ChannelPanel";
 import { ShopPanel } from "./panels/ShopPanel";
+import { AchievementsPanel } from "./panels/AchievementsPanel";
 import { OfflineModal } from "./modals/OfflineModal";
 import { MilestoneModal } from "./modals/MilestoneModal";
 import { EventModal } from "./modals/EventModal";
 import { DailyRewardModal } from "./modals/DailyRewardModal";
 import { PrestigeModal } from "./modals/PrestigeModal";
+import { AchievementModal } from "./modals/AchievementModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { ChannelNameInput } from "./ChannelNameInput";
 import { playUpgradeSound } from "@/game/sounds";
@@ -84,6 +86,7 @@ export function Game() {
       {activeTab === "channel" && (
         <ChannelPanel state={state} onUnlock={game.unlockCategory} onSetActive={game.setActiveCategory} />
       )}
+      {activeTab === "achievements" && <AchievementsPanel state={state} />}
       {activeTab === "shop" && <ShopPanel />}
 
       {/* Settings button */}
@@ -110,6 +113,9 @@ export function Game() {
           onClaim={game.claimDailyReward}
           onClose={game.dismissDaily}
         />
+      )}
+      {game.newAchievement && (
+        <AchievementModal achievement={game.newAchievement} onClose={game.dismissAchievement} />
       )}
       {showPrestige && (
         <PrestigeModal

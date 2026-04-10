@@ -11,6 +11,7 @@ import { getNewMilestone, MilestoneDef } from "./milestones";
 import { EQUIPMENT, SPACES, TEAM } from "./upgrades";
 import { CATEGORIES } from "./categories";
 import { canPrestige, performPrestige } from "./prestige";
+import { checkNewAchievements, AchievementDef } from "./achievements";
 
 export interface OfflineReport {
   offlineViews: number;
@@ -29,6 +30,7 @@ export function useGame() {
   const [milestone, setMilestone] = useState<MilestoneDef | null>(null);
   const [activeEvent, setActiveEvent] = useState<ActiveEvent | null>(null);
   const [showDaily, setShowDaily] = useState(false);
+  const [newAchievement, setNewAchievement] = useState<AchievementDef | null>(null);
   const stateRef = useRef<GameState | null>(null);
 
   useEffect(() => {
@@ -108,6 +110,16 @@ export function useGame() {
           next = {
             ...next,
             celebratedMilestones: [...next.celebratedMilestones, newMilestone.subscribers],
+          };
+        }
+
+        // Check achievements
+        const newAchievements = checkNewAchievements(next);
+        if (newAchievements.length > 0) {
+          setNewAchievement(newAchievements[0]);
+          next = {
+            ...next,
+            achievements: [...next.achievements, ...newAchievements.map((a) => a.id)],
           };
         }
 
@@ -235,6 +247,7 @@ export function useGame() {
   const dismissOffline = useCallback(() => setOfflineReport(null), []);
   const dismissMilestone = useCallback(() => setMilestone(null), []);
   const dismissDaily = useCallback(() => setShowDaily(false), []);
+  const dismissAchievement = useCallback(() => setNewAchievement(null), []);
 
   return {
     state,
@@ -242,6 +255,7 @@ export function useGame() {
     milestone,
     activeEvent,
     showDaily,
+    newAchievement,
     click,
     buyEquipment,
     buySpace,
@@ -254,5 +268,6 @@ export function useGame() {
     dismissOffline,
     dismissMilestone,
     dismissDaily,
+    dismissAchievement,
   };
 }
