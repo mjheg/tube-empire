@@ -21,6 +21,7 @@ export function loadGame(): GameState | null {
     // Backfill fields added after initial release
     if (!Array.isArray(parsed.achievements)) parsed.achievements = [];
     if (!parsed.channelName) parsed.channelName = "";
+    if (typeof parsed.tutorialStep !== "number") parsed.tutorialStep = -1; // skip for existing players
     return parsed as GameState;
   } catch {
     return null;

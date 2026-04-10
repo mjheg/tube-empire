@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { GameState, createInitialState } from "./state";
-import { handleClick, tick, calcViewsPerClick, calcViewsPerSecond } from "./engine";
+import { handleClick, tick, calcViewsPerClick, calcViewsPerSecond, calcSubscribers } from "./engine";
 import { saveGame, loadGame, calcOfflineEarnings } from "./save";
 import { shouldRotateTrending, getNewTrendingCategory } from "./trending";
 import { rollForEvent, GameEvent } from "./events";
@@ -12,6 +12,7 @@ import { EQUIPMENT, SPACES, TEAM } from "./upgrades";
 import { CATEGORIES } from "./categories";
 import { canPrestige, performPrestige } from "./prestige";
 import { checkNewAchievements, AchievementDef } from "./achievements";
+import { TUTORIAL_STEPS } from "./tutorial";
 
 export interface OfflineReport {
   offlineViews: number;
@@ -49,7 +50,7 @@ export function useGame() {
         money: saved.money + offline.offlineMoney,
         lastOnlineTime: Date.now(),
       };
-      loaded.subscribers = Math.floor(loaded.totalViews / 1000);
+      loaded.subscribers = calcSubscribers(loaded.totalViews);
       setState(loaded);
       if (offline.offlineViews > 0) {
         setOfflineReport(offline);
@@ -244,6 +245,17 @@ export function useGame() {
     });
   }, []);
 
+  const advanceTutorial = useCallback(() => {
+    setState((prev) => {
+      if (!prev) return prev;
+      const nextStep = prev.tutorialStep + 1;
+      if (nextStep >= TUTORIAL_STEPS.length) {
+        return { ...prev, tutorialStep: -1 };
+      }
+      return { ...prev, tutorialStep: nextStep };
+    });
+  }, []);
+
   const dismissOffline = useCallback(() => setOfflineReport(null), []);
   const dismissMilestone = useCallback(() => setMilestone(null), []);
   const dismissDaily = useCallback(() => setShowDaily(false), []);
@@ -265,6 +277,7 @@ export function useGame() {
     claimDailyReward,
     prestige,
     setChannelName,
+    advanceTutorial,
     dismissOffline,
     dismissMilestone,
     dismissDaily,

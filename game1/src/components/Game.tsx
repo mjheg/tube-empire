@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useGame } from "@/game/useGame";
 import { canPrestige as checkPrestige } from "@/game/prestige";
+import { TUTORIAL_STEPS } from "@/game/tutorial";
 import { StatsBar } from "./StatsBar";
 import { CommentFeed } from "./CommentFeed";
 import { StudioView } from "./StudioView";
@@ -22,6 +23,7 @@ import { PrestigeModal } from "./modals/PrestigeModal";
 import { AchievementModal } from "./modals/AchievementModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { ChannelNameInput } from "./ChannelNameInput";
+import { TutorialOverlay } from "./TutorialOverlay";
 import { playUpgradeSound } from "@/game/sounds";
 
 export function Game() {
@@ -60,6 +62,18 @@ export function Game() {
     return <ChannelNameInput onSubmit={game.setChannelName} />;
   }
 
+  // Tutorial
+  const tutorialActive = state.tutorialStep >= 0 && state.tutorialStep < TUTORIAL_STEPS.length;
+  const currentTutorialStep = tutorialActive ? TUTORIAL_STEPS[state.tutorialStep] : null;
+
+  // Handle click with tutorial advancement
+  const handleClick = () => {
+    game.click();
+    if (currentTutorialStep && currentTutorialStep.waitFor === "click") {
+      game.advanceTutorial();
+    }
+  };
+
   return (
     <div className="min-h-dvh bg-gray-900 flex flex-col max-w-md mx-auto relative">
       {/* Stats */}
@@ -72,7 +86,7 @@ export function Game() {
       <div className="flex-1 flex flex-col justify-between py-2">
         <CommentFeed subscribers={state.subscribers} />
         <StudioView spaceLevel={state.spaceLevel} equipmentLevel={state.equipmentLevel} />
-        <ClickButton viewsPerClick={state.viewsPerClick || 1} activeCategory={state.activeCategory} onClick={game.click} />
+        <ClickButton viewsPerClick={state.viewsPerClick || 1} activeCategory={state.activeCategory} onClick={handleClick} />
         <MilestoneBar state={state} />
       </div>
 
@@ -100,21 +114,26 @@ export function Game() {
       {/* Bottom Navigation */}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Modals */}
-      {game.offlineReport && (
+      {/* Tutorial Overlay */}
+      {currentTutorialStep && (
+        <TutorialOverlay step={currentTutorialStep} onDismiss={game.advanceTutorial} />
+      )}
+
+      {/* Modals (only show when tutorial is done) */}
+      {!tutorialActive && game.offlineReport && (
         <OfflineModal report={game.offlineReport} onClose={game.dismissOffline} />
       )}
-      {game.milestone && (
+      {!tutorialActive && game.milestone && (
         <MilestoneModal milestone={game.milestone} onClose={game.dismissMilestone} />
       )}
-      {game.showDaily && (
+      {!tutorialActive && game.showDaily && (
         <DailyRewardModal
           streak={state.dailyStreak}
           onClaim={game.claimDailyReward}
           onClose={game.dismissDaily}
         />
       )}
-      {game.newAchievement && (
+      {!tutorialActive && game.newAchievement && (
         <AchievementModal achievement={game.newAchievement} onClose={game.dismissAchievement} />
       )}
       {showPrestige && (

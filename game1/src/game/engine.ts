@@ -9,7 +9,8 @@ export function calcViewsPerClick(state: GameState): number {
   const trendingMult = state.activeCategory === state.currentTrending ? 2 : 1;
   const prestigeMult = state.permanentMultiplier;
 
-  return Math.floor(1 * equipMult * spaceMult * categoryMult * trendingMult * prestigeMult);
+  const base = 10; // Start with 10 views per click for faster early game
+  return Math.floor(base * equipMult * spaceMult * categoryMult * trendingMult * prestigeMult);
 }
 
 export function calcViewsPerSecond(state: GameState): number {
@@ -26,6 +27,16 @@ export function calcViewsPerSecond(state: GameState): number {
   return Math.floor(vps * spaceMult * prestigeMult);
 }
 
+/**
+ * Subscribers from total views. Fast early, slows down later.
+ * First 100 subs: ~10 clicks. First 1000 subs: ~100 clicks.
+ */
+export function calcSubscribers(totalViews: number): number {
+  if (totalViews < 1000) return Math.floor(totalViews / 100); // 1 sub per 100 views early
+  if (totalViews < 100_000) return Math.floor(10 + (totalViews - 1000) / 500);
+  return Math.floor(208 + (totalViews - 100_000) / 1000);
+}
+
 function calcMoneyPerView(subscribers: number): number {
   if (subscribers < 100) return 0;
   return 0.001;
@@ -35,7 +46,7 @@ export function handleClick(state: GameState): GameState {
   const vpc = calcViewsPerClick(state);
   const newViews = state.views + vpc;
   const newTotalViews = state.totalViews + vpc;
-  const newSubscribers = Math.floor(newTotalViews / 1000);
+  const newSubscribers = calcSubscribers(newTotalViews);
   const moneyEarned = vpc * calcMoneyPerView(newSubscribers);
 
   return {
@@ -57,7 +68,7 @@ export function tick(state: GameState): GameState {
 
   const newViews = state.views + vps;
   const newTotalViews = state.totalViews + vps;
-  const newSubscribers = Math.floor(newTotalViews / 1000);
+  const newSubscribers = calcSubscribers(newTotalViews);
   const moneyEarned = vps * calcMoneyPerView(newSubscribers);
 
   return {

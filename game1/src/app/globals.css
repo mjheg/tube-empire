@@ -79,6 +79,19 @@ html, body {
   animation: pulse-slow 3s ease-in-out infinite;
 }
 
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 1.5s ease-in-out infinite;
+}
+
 /* Button press feedback */
 button:active {
   transform: scale(0.97);

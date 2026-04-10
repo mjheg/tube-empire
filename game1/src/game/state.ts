@@ -59,6 +59,10 @@ export interface GameState {
 
   // Achievements
   achievements: string[]; // list of achieved IDs
+
+  // Tutorial
+  tutorialStep: number; // -1 = completed
+
 }
 
 export function createInitialState(): GameState {
@@ -92,5 +96,6 @@ export function createInitialState(): GameState {
     totalPlayTime: 0,
     channelName: "",
     achievements: [],
+    tutorialStep: 0,
   };
 }
