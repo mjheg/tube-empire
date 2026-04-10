@@ -4,6 +4,12 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "YouTuber Tycoon",
   description: "Grow from 0 subscribers to a media empire!",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "YouTuber Tycoon",
+  },
 };
 
 export const viewport: Viewport = {
