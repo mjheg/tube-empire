@@ -53,6 +53,12 @@ export interface GameState {
   // Stats
   totalClicks: number;
   totalPlayTime: number; // seconds
+
+  // Profile
+  channelName: string;
+
+  // Achievements
+  achievements: string[]; // list of achieved IDs
 }
 
 export function createInitialState(): GameState {
@@ -84,5 +90,7 @@ export function createInitialState(): GameState {
     lastOnlineTime: Date.now(),
     totalClicks: 0,
     totalPlayTime: 0,
+    channelName: "",
+    achievements: [],
   };
 }

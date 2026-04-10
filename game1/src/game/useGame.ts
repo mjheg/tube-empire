@@ -225,6 +225,13 @@ export function useGame() {
     });
   }, []);
 
+  const setChannelName = useCallback((name: string) => {
+    setState((prev) => {
+      if (!prev) return prev;
+      return { ...prev, channelName: name };
+    });
+  }, []);
+
   const dismissOffline = useCallback(() => setOfflineReport(null), []);
   const dismissMilestone = useCallback(() => setMilestone(null), []);
   const dismissDaily = useCallback(() => setShowDaily(false), []);
@@ -243,6 +250,7 @@ export function useGame() {
     setActiveCategory,
     claimDailyReward,
     prestige,
+    setChannelName,
     dismissOffline,
     dismissMilestone,
     dismissDaily,

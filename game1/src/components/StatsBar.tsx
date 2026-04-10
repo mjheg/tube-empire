@@ -15,6 +15,9 @@ export function StatsBar({ state }: Props) {
     <div className="px-4 py-3 bg-gray-800/80 backdrop-blur border-b border-gray-700">
       <div className="flex justify-between items-center">
         <div>
+          {state.channelName && (
+            <div className="text-xs text-red-400 font-medium">{state.channelName}</div>
+          )}
           <div className="text-lg font-bold">
             <span className="text-yellow-400">&#9733;</span> {formatNumber(state.subscribers)} subs
           </div>

@@ -19,6 +19,7 @@ import { EventModal } from "./modals/EventModal";
 import { DailyRewardModal } from "./modals/DailyRewardModal";
 import { PrestigeModal } from "./modals/PrestigeModal";
 import { SettingsModal } from "./modals/SettingsModal";
+import { ChannelNameInput } from "./ChannelNameInput";
 
 export function Game() {
   const game = useGame();
@@ -35,6 +36,11 @@ export function Game() {
   }
 
   const { state } = game;
+
+  // Show channel name input for new players
+  if (!state.channelName) {
+    return <ChannelNameInput onSubmit={game.setChannelName} />;
+  }
 
   return (
     <div className="min-h-dvh bg-gray-900 flex flex-col max-w-md mx-auto relative">
