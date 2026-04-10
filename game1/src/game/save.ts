@@ -18,6 +18,9 @@ export function loadGame(): GameState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (typeof parsed.totalViews !== "number") return null;
+    // Backfill fields added after initial release
+    if (!Array.isArray(parsed.achievements)) parsed.achievements = [];
+    if (!parsed.channelName) parsed.channelName = "";
     return parsed as GameState;
   } catch {
     return null;
