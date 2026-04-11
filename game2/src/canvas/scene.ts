@@ -1,6 +1,7 @@
 "use client";
 
 import * as BABYLON from "@babylonjs/core";
+import "@babylonjs/loaders/OBJ";
 
 export function createScene(canvas: HTMLCanvasElement) {
   const engine = new BABYLON.Engine(canvas, true, { stencil: false });
@@ -103,200 +104,71 @@ export function createScene(canvas: HTMLCanvasElement) {
   return { engine, scene, camera, shadowGen };
 }
 
-// === 3D HAMSTER - detailed, bigger, rounder, cuter ===
+// === 3D HAMSTER - loaded from OBJ model ===
 export function createHamster(scene: BABYLON.Scene, shadowGen: BABYLON.ShadowGenerator) {
   const hamster = new BABYLON.TransformNode("hamster", scene);
-  hamster.scaling = new BABYLON.Vector3(0.8, 0.8, 0.8); // proportional to cage like hammyhome
 
-  // Materials
-  const furMat = new BABYLON.StandardMaterial("furMat", scene);
-  furMat.diffuseColor = new BABYLON.Color3(0.82, 0.62, 0.38); // golden brown
-  furMat.specularColor = new BABYLON.Color3(0.15, 0.12, 0.08);
-  furMat.specularPower = 16;
+  // Placeholder body while model loads (small sphere)
+  const placeholder = BABYLON.MeshBuilder.CreateSphere("body", { diameter: 0.6, segments: 8 }, scene);
+  placeholder.position.y = 0.3;
+  placeholder.parent = hamster;
+  const phMat = new BABYLON.StandardMaterial("phMat", scene);
+  phMat.diffuseColor = new BABYLON.Color3(0.82, 0.62, 0.38);
+  placeholder.material = phMat;
+  shadowGen.addShadowCaster(placeholder);
 
-  const darkFurMat = new BABYLON.StandardMaterial("darkFurMat", scene);
-  darkFurMat.diffuseColor = new BABYLON.Color3(0.6, 0.4, 0.22); // darker brown patches
-  darkFurMat.specularColor = new BABYLON.Color3(0.1, 0.08, 0.05);
+  // Load OBJ model
+  BABYLON.SceneLoader.ImportMesh(
+    "",
+    "/sprites/",
+    "hamster.obj",
+    scene,
+    (meshes) => {
+      // Remove placeholder
+      placeholder.dispose();
 
-  const bellyMat = new BABYLON.StandardMaterial("bellyMat", scene);
-  bellyMat.diffuseColor = new BABYLON.Color3(0.97, 0.94, 0.89); // cream white
-  bellyMat.specularColor = new BABYLON.Color3(0.05, 0.05, 0.05);
+      // Apply texture and parent all meshes to hamster node
+      const diffuseTex = new BABYLON.Texture("/sprites/hamster_diffuse.png", scene);
+      const normalTex = new BABYLON.Texture("/sprites/hamster_normal.png", scene);
 
-  const earMat = new BABYLON.StandardMaterial("earMat", scene);
-  earMat.diffuseColor = new BABYLON.Color3(0.95, 0.72, 0.72); // pink inside ear
+      const mat = new BABYLON.StandardMaterial("hamsterObjMat", scene);
+      mat.diffuseTexture = diffuseTex;
+      mat.bumpTexture = normalTex;
+      mat.specularColor = new BABYLON.Color3(0.15, 0.12, 0.08);
+      mat.specularPower = 16;
 
-  // === BODY === (plump oval)
-  const body = BABYLON.MeshBuilder.CreateSphere("body", {
-    diameterX: 1.5, diameterY: 1.2, diameterZ: 1.3, segments: 24
-  }, scene);
-  body.position.y = 0.6;
-  body.parent = hamster;
-  body.material = furMat;
-  shadowGen.addShadowCaster(body);
+      for (const mesh of meshes) {
+        mesh.parent = hamster;
+        mesh.material = mat;
+        shadowGen.addShadowCaster(mesh);
 
-  // Back fur (darker stripe)
-  const backStripe = BABYLON.MeshBuilder.CreateSphere("backStripe", {
-    diameterX: 0.9, diameterY: 0.4, diameterZ: 1.0, segments: 16
-  }, scene);
-  backStripe.position = new BABYLON.Vector3(0, 0.95, -0.1);
-  backStripe.parent = hamster;
-  backStripe.material = darkFurMat;
+        // Name one mesh "body" for breathing animation
+        if (mesh.name.includes("base") || meshes.indexOf(mesh) === 0) {
+          mesh.name = "body";
+        }
+      }
 
-  // Belly
-  const belly = BABYLON.MeshBuilder.CreateSphere("belly", {
-    diameterX: 1.0, diameterY: 0.85, diameterZ: 0.9, segments: 16
-  }, scene);
-  belly.position = new BABYLON.Vector3(0, 0.5, 0.2);
-  belly.parent = hamster;
-  belly.material = bellyMat;
+      // Fit model to cage - adjust scale and position
+      // Get bounding info to auto-scale
+      const boundingInfo = hamster.getHierarchyBoundingVectors();
+      const size = boundingInfo.max.subtract(boundingInfo.min);
+      const maxDim = Math.max(size.x, size.y, size.z);
 
-  // Butt (rounder back)
-  const butt = BABYLON.MeshBuilder.CreateSphere("butt", {
-    diameterX: 1.1, diameterY: 0.9, diameterZ: 0.8, segments: 16
-  }, scene);
-  butt.position = new BABYLON.Vector3(0, 0.55, -0.45);
-  butt.parent = hamster;
-  butt.material = furMat;
+      // Target size ~1.5 units tall
+      const targetSize = 1.5;
+      const scale = targetSize / maxDim;
+      hamster.scaling = new BABYLON.Vector3(scale, scale, scale);
 
-  // === HEAD === (big round head, hamsters have big heads)
-  const head = BABYLON.MeshBuilder.CreateSphere("head", {
-    diameterX: 1.0, diameterY: 0.9, diameterZ: 0.95, segments: 24
-  }, scene);
-  head.position = new BABYLON.Vector3(0, 0.95, 0.45);
-  head.parent = hamster;
-  head.material = furMat;
-  shadowGen.addShadowCaster(head);
-
-  // Snout (slightly protruding)
-  const snout = BABYLON.MeshBuilder.CreateSphere("snout", {
-    diameterX: 0.45, diameterY: 0.35, diameterZ: 0.3, segments: 16
-  }, scene);
-  snout.position = new BABYLON.Vector3(0, 0.85, 0.85);
-  snout.parent = hamster;
-  snout.material = bellyMat;
-
-  // === EARS === (round, cute)
-  for (const side of [-1, 1]) {
-    // Outer ear
-    const earOuter = BABYLON.MeshBuilder.CreateSphere("earOuter" + side, {
-      diameterX: 0.3, diameterY: 0.35, diameterZ: 0.12, segments: 16
-    }, scene);
-    earOuter.position = new BABYLON.Vector3(side * 0.38, 1.35, 0.3);
-    earOuter.rotation.z = side * 0.3;
-    earOuter.parent = hamster;
-    earOuter.material = furMat;
-
-    // Inner ear (pink)
-    const earInner = BABYLON.MeshBuilder.CreateSphere("earInner" + side, {
-      diameterX: 0.18, diameterY: 0.22, diameterZ: 0.06, segments: 12
-    }, scene);
-    earInner.position = new BABYLON.Vector3(side * 0.38, 1.35, 0.33);
-    earInner.rotation.z = side * 0.3;
-    earInner.parent = hamster;
-    earInner.material = earMat;
-  }
-
-  // === EYES === (big, shiny, round - key to cuteness)
-  const eyeMat = new BABYLON.StandardMaterial("eyeMat", scene);
-  eyeMat.diffuseColor = new BABYLON.Color3(0.02, 0.02, 0.02);
-  eyeMat.specularColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-  eyeMat.specularPower = 64;
-
-  const shineMat = new BABYLON.StandardMaterial("shineMat", scene);
-  shineMat.diffuseColor = new BABYLON.Color3(1, 1, 1);
-  shineMat.emissiveColor = new BABYLON.Color3(0.9, 0.9, 0.9);
-
-  for (const side of [-1, 1]) {
-    // Eye (bigger = cuter)
-    const eye = BABYLON.MeshBuilder.CreateSphere("eye" + side, { diameter: 0.18, segments: 16 }, scene);
-    eye.position = new BABYLON.Vector3(side * 0.22, 1.0, 0.8);
-    eye.parent = hamster;
-    eye.material = eyeMat;
-
-    // Big highlight
-    const shine1 = BABYLON.MeshBuilder.CreateSphere("shine1_" + side, { diameter: 0.07 }, scene);
-    shine1.position = new BABYLON.Vector3(side * 0.2, 1.04, 0.88);
-    shine1.parent = hamster;
-    shine1.material = shineMat;
-
-    // Small highlight
-    const shine2 = BABYLON.MeshBuilder.CreateSphere("shine2_" + side, { diameter: 0.04 }, scene);
-    shine2.position = new BABYLON.Vector3(side * 0.24, 0.97, 0.87);
-    shine2.parent = hamster;
-    shine2.material = shineMat;
-  }
-
-  // === NOSE === (tiny pink triangle shape)
-  const nose = BABYLON.MeshBuilder.CreateSphere("nose", {
-    diameterX: 0.1, diameterY: 0.07, diameterZ: 0.07, segments: 12
-  }, scene);
-  nose.position = new BABYLON.Vector3(0, 0.9, 0.97);
-  nose.parent = hamster;
-  const noseMat = new BABYLON.StandardMaterial("noseMat", scene);
-  noseMat.diffuseColor = new BABYLON.Color3(0.95, 0.55, 0.55);
-  nose.material = noseMat;
-
-  // === CHEEKS === (hamster's signature puffy cheeks)
-  const cheekMat = new BABYLON.StandardMaterial("cheekMat", scene);
-  cheekMat.diffuseColor = new BABYLON.Color3(0.88, 0.68, 0.48);
-  cheekMat.specularColor = new BABYLON.Color3(0.08, 0.06, 0.04);
-
-  for (const side of [-1, 1]) {
-    const cheek = BABYLON.MeshBuilder.CreateSphere("cheek", {
-      diameterX: 0.45, diameterY: 0.35, diameterZ: 0.4, segments: 16
-    }, scene);
-    cheek.position = new BABYLON.Vector3(side * 0.38, 0.82, 0.55);
-    cheek.parent = hamster;
-    cheek.material = cheekMat;
-  }
-
-  // === WHISKERS === (thin cylinders)
-  const whiskerMat = new BABYLON.StandardMaterial("whiskerMat", scene);
-  whiskerMat.diffuseColor = new BABYLON.Color3(0.85, 0.8, 0.75);
-  whiskerMat.alpha = 0.5;
-
-  for (const side of [-1, 1]) {
-    for (const angle of [-0.15, 0, 0.15]) {
-      const whisker = BABYLON.MeshBuilder.CreateCylinder("whisker", {
-        height: 0.5, diameter: 0.01, tessellation: 6
-      }, scene);
-      whisker.position = new BABYLON.Vector3(side * 0.35, 0.88 + angle * 0.5, 0.8);
-      whisker.rotation.z = side * (Math.PI / 2 + angle);
-      whisker.rotation.y = angle * 2;
-      whisker.parent = hamster;
-      whisker.material = whiskerMat;
+      // Center the model on the ground
+      const center = boundingInfo.min.add(size.scale(0.5));
+      hamster.position.y = -boundingInfo.min.y * scale;
+    },
+    null,
+    (_scene, message) => {
+      console.warn("Failed to load hamster model:", message);
+      // Keep placeholder if load fails
     }
-  }
-
-  // === PAWS === (little round feet)
-  const pawMat = new BABYLON.StandardMaterial("pawMat", scene);
-  pawMat.diffuseColor = new BABYLON.Color3(0.92, 0.78, 0.62);
-
-  // Front paws
-  for (const side of [-1, 1]) {
-    const paw = BABYLON.MeshBuilder.CreateSphere("frontPaw" + side, {
-      diameterX: 0.2, diameterY: 0.1, diameterZ: 0.22, segments: 12
-    }, scene);
-    paw.position = new BABYLON.Vector3(side * 0.35, 0.1, 0.45);
-    paw.parent = hamster;
-    paw.material = pawMat;
-  }
-
-  // Back paws (bigger)
-  for (const side of [-1, 1]) {
-    const paw = BABYLON.MeshBuilder.CreateSphere("backPaw" + side, {
-      diameterX: 0.25, diameterY: 0.1, diameterZ: 0.3, segments: 12
-    }, scene);
-    paw.position = new BABYLON.Vector3(side * 0.4, 0.1, -0.25);
-    paw.parent = hamster;
-    paw.material = pawMat;
-  }
-
-  // === TAIL === (tiny stub)
-  const tail = BABYLON.MeshBuilder.CreateSphere("tail", { diameter: 0.12, segments: 8 }, scene);
-  tail.position = new BABYLON.Vector3(0, 0.45, -0.65);
-  tail.parent = hamster;
-  tail.material = furMat;
+  );
 
   return hamster;
 }
