@@ -185,6 +185,11 @@ export function GameCanvas({ state, feedMode, onStateChange, onFeed }: Props) {
       }
     };
 
+    // Target position for drag (hamster lerps toward it for resistance feel)
+    let dragTargetX = 0;
+    let dragTargetZ = 0;
+    let dragLiftTarget = 0;
+
     scene.onPointerMove = (evt) => {
       if (!pointerDownOnHamster || !hamsterRef.current) return;
 
@@ -195,29 +200,43 @@ export function GameCanvas({ state, feedMode, onStateChange, onFeed }: Props) {
       if (dist > 10) {
         isDraggingHamsterRef.current = true;
 
-        // Move hamster to pointer position on ground plane
+        // Get target position on floor
         const pickResult = scene.pick(evt.clientX, evt.clientY, (mesh) => mesh.name === "floor");
-        if (pickResult?.hit && pickResult.pickedPoint && hamsterRef.current) {
-          const target = pickResult.pickedPoint;
-          hamsterRef.current.position.x = Math.max(-4.5, Math.min(4.5, target.x));
-          hamsterRef.current.position.z = Math.max(-3, Math.min(3, target.z));
-          hamsterRef.current.position.y = 0.8; // lift up while dragging
+        if (pickResult?.hit && pickResult.pickedPoint) {
+          dragTargetX = Math.max(-4.5, Math.min(4.5, pickResult.pickedPoint.x));
+          dragTargetZ = Math.max(-3, Math.min(3, pickResult.pickedPoint.z));
+          dragLiftTarget = 0.4; // slight lift, not too high
         }
 
-        // Petting effect - every 30px of drag = one pet
+        // Petting effect
         petCountRef.current += dist;
-        if (petCountRef.current > 30) {
+        if (petCountRef.current > 40) {
           petCountRef.current = 0;
-          isPettingRef.current = true;
           onStateChange((prev) => pet(prev));
         }
         dragStartPos = { x: evt.clientX, y: evt.clientY };
       }
     };
 
+    // Smooth drag follow in render loop (creates resistance feeling)
+    scene.registerBeforeRender(() => {
+      if (!isDraggingHamsterRef.current || !hamsterRef.current) return;
+      const h = hamsterRef.current;
+      // Lerp toward target (0.12 = resistance, lower = more resistance)
+      const lerpSpeed = 0.12;
+      h.position.x += (dragTargetX - h.position.x) * lerpSpeed;
+      h.position.z += (dragTargetZ - h.position.z) * lerpSpeed;
+      h.position.y += (dragLiftTarget - h.position.y) * lerpSpeed;
+
+      // Slight wobble while being held
+      const now = performance.now();
+      h.rotation.z = Math.sin(now * 0.008) * 0.1;
+      h.rotation.x = Math.sin(now * 0.006) * 0.05;
+    });
+
     scene.onPointerUp = () => {
       if (pointerDownOnHamster && !isDraggingHamsterRef.current) {
-        // Tap on hamster = pet + jump
+        // Tap on hamster = pet + small bounce
         onStateChange((prev) => pet(prev));
         if (hamsterRef.current) {
           const h = hamsterRef.current;
@@ -229,28 +248,53 @@ export function GameCanvas({ state, feedMode, onStateChange, onFeed }: Props) {
           );
           jumpAnim.setKeys([
             { frame: 0, value: startY },
-            { frame: 5, value: startY + 0.5 },
-            { frame: 10, value: startY },
+            { frame: 4, value: startY + 0.3 },
+            { frame: 8, value: startY },
           ]);
           h.animations = [jumpAnim];
-          scene.beginAnimation(h, 0, 10, false);
+          scene.beginAnimation(h, 0, 8, false);
         }
       }
 
       if (isDraggingHamsterRef.current && hamsterRef.current) {
-        // Drop hamster back to ground
+        // Smooth drop with bounce
         const h = hamsterRef.current;
+        const startY = h.position.y;
         const dropAnim = new BABYLON.Animation(
           "drop", "position.y", 30,
           BABYLON.Animation.ANIMATIONTYPE_FLOAT,
           BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
         );
         dropAnim.setKeys([
-          { frame: 0, value: h.position.y },
-          { frame: 5, value: 0 },
+          { frame: 0, value: startY },
+          { frame: 4, value: 0 },
+          { frame: 6, value: 0.1 },  // small bounce
+          { frame: 8, value: 0 },
         ]);
         h.animations = [dropAnim];
-        scene.beginAnimation(h, 0, 5, false);
+        scene.beginAnimation(h, 0, 8, false);
+
+        // Reset rotation smoothly
+        const rotZAnim = new BABYLON.Animation(
+          "rotZ", "rotation.z", 30,
+          BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+          BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+        rotZAnim.setKeys([
+          { frame: 0, value: h.rotation.z },
+          { frame: 6, value: 0 },
+        ]);
+        const rotXAnim = new BABYLON.Animation(
+          "rotX", "rotation.x", 30,
+          BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+          BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+        rotXAnim.setKeys([
+          { frame: 0, value: h.rotation.x },
+          { frame: 6, value: 0 },
+        ]);
+        h.animations.push(rotZAnim, rotXAnim);
+        scene.beginAnimation(h, 0, 8, false);
       }
 
       pointerDownOnHamster = false;
