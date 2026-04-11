@@ -13,12 +13,9 @@ import { SettingsModal } from "./modals/SettingsModal";
 import { NameInput } from "./NameInput";
 import { FOODS } from "@/game/items";
 
-export type InteractMode = "move" | "touch" | "feed";
-
 export function Game() {
   const [state, setState] = useState<HamsterState | null>(null);
-  const [mode, setMode] = useState<InteractMode>("touch");
-  const [showEdit, setShowEdit] = useState(false);
+  const [feedMode, setFeedMode] = useState(false);
   const [offlineReport, setOfflineReport] = useState<OfflineReport | null>(null);
   const [levelUp, setLevelUp] = useState<number | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -75,7 +72,7 @@ export function Game() {
   const handleFeed = useCallback(() => {
     setState((prev) => {
       if (!prev) return prev;
-      return feed(prev, FOODS[0].value); // free sunflower seed
+      return feed(prev, FOODS[0].value);
     });
   }, []);
 
@@ -112,18 +109,15 @@ export function Game() {
 
   return (
     <div className="h-dvh w-full bg-[#c9a96e] relative overflow-hidden">
-      {/* 3D Canvas - full screen */}
-      <GameCanvas state={state} mode={mode} onStateChange={handleStateChange} onFeed={handleFeed} />
+      {/* 3D Canvas - full screen, camera always controllable */}
+      <GameCanvas state={state} feedMode={feedMode} onStateChange={handleStateChange} onFeed={handleFeed} />
 
-      {/* Header - like hammyhome */}
-      <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center px-3 py-2">
-        {/* Left: cage name */}
-        <div className="bg-black/40 backdrop-blur-sm rounded-lg px-3 py-1.5 text-white text-sm font-bold">
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center px-3 py-2 pointer-events-none">
+        <div className="pointer-events-auto bg-black/40 backdrop-blur-sm rounded-lg px-3 py-1.5 text-white text-sm font-bold">
           {state.name}
         </div>
-
-        {/* Right: share + settings */}
-        <div className="flex gap-2">
+        <div className="pointer-events-auto flex gap-2">
           <button
             onClick={handleShare}
             className="bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white text-sm"
@@ -139,97 +133,49 @@ export function Game() {
         </div>
       </div>
 
-      {/* Bottom interaction menu - like hammyhome */}
-      <div className="absolute bottom-0 left-0 right-0 z-10">
-        <div className="flex justify-center items-end gap-3 pb-6 px-4">
-          {/* Move button */}
-          <button
-            onClick={() => setMode("move")}
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all ${
-              mode === "move"
-                ? "bg-white text-gray-700 scale-110 ring-2 ring-amber-400"
-                : "bg-white/70 text-gray-500"
-            }`}
-          >
-            {"\u271A"}
-          </button>
+      {/* Bottom controls - hammyhome style */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
+        <div className="flex justify-between items-end pb-5 px-4">
+          {/* Left: interaction buttons */}
+          <div className="pointer-events-auto flex gap-3">
+            {/* Touch/Pet - default */}
+            <button
+              onClick={() => setFeedMode(false)}
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all ${
+                !feedMode
+                  ? "bg-white text-gray-700 ring-2 ring-amber-400"
+                  : "bg-white/70 text-gray-500"
+              }`}
+            >
+              {"\u{1F446}"}
+            </button>
 
-          {/* Touch/Pet button */}
-          <button
-            onClick={() => setMode("touch")}
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all ${
-              mode === "touch"
-                ? "bg-white text-gray-700 scale-110 ring-2 ring-amber-400"
-                : "bg-white/70 text-gray-500"
-            }`}
-          >
-            {"\u{1F446}"}
-          </button>
+            {/* Feed */}
+            <button
+              onClick={() => setFeedMode(true)}
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all ${
+                feedMode
+                  ? "bg-white text-gray-700 ring-2 ring-amber-400"
+                  : "bg-white/70 text-gray-500"
+              }`}
+            >
+              {"\u{1F36A}"}
+            </button>
+          </div>
 
-          {/* Feed button */}
-          <button
-            onClick={() => setMode("feed")}
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all ${
-              mode === "feed"
-                ? "bg-white text-gray-700 scale-110 ring-2 ring-amber-400"
-                : "bg-white/70 text-gray-500"
-            }`}
-          >
-            {"\u{1F36A}"}
-          </button>
-
-          {/* Spacer */}
-          <div className="flex-1" />
-
-          {/* Save button - like hammyhome */}
+          {/* Right: save button */}
           <button
             onClick={handleSave}
-            className="bg-green-500 text-white px-4 py-2.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-1.5 active:bg-green-600"
+            className="pointer-events-auto bg-green-500 text-white px-4 py-2.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-1.5 active:bg-green-600"
           >
             {"\u2714"} save
           </button>
         </div>
       </div>
 
-      {/* Edit FAB button - like hammyhome */}
-      <button
-        onClick={() => setShowEdit(!showEdit)}
-        className={`absolute bottom-20 right-4 z-10 w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-xl transition-all ${
-          showEdit
-            ? "bg-amber-500 text-white rotate-45"
-            : "bg-amber-500 text-white"
-        }`}
-      >
-        {showEdit ? "\u2716" : "\u{270F}\uFE0F"}
-      </button>
-
-      {/* Edit panel - item categories like hammyhome */}
-      {showEdit && (
-        <div className="absolute bottom-36 left-0 right-0 z-10 flex justify-center">
-          <div className="bg-white/95 backdrop-blur rounded-xl shadow-xl px-3 py-2 flex gap-2">
-            {[
-              { id: "bowls", icon: "\u{1F963}", label: "Bowls" },
-              { id: "bottles", icon: "\u{1F4A7}", label: "Bottles" },
-              { id: "houses", icon: "\u{1F3E0}", label: "Houses" },
-              { id: "wheels", icon: "\u{1F3A1}", label: "Wheels" },
-              { id: "tubes", icon: "\u{1F573}\uFE0F", label: "Tubes" },
-              { id: "hams", icon: "\u{1F439}", label: "Hamster" },
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                className="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center text-lg active:bg-amber-100 transition-colors"
-                title={cat.label}
-              >
-                {cat.icon}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Saved notification */}
       {showSaved && (
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-bounce">
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
           Saved!
         </div>
       )}
